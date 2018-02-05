@@ -12,6 +12,7 @@ import java.util.List;
 
 public class BotStartState extends BaseBotState implements BotState {
     private static final String START_COMMAND = "/start";
+    public static final String BOT_START_MSG = "bot_start_msg";
 
     @Override
     public boolean isMessageValid(Message message) {
@@ -30,7 +31,7 @@ public class BotStartState extends BaseBotState implements BotState {
         row.add(keyboardButton);
         keyboard.add(row);
         replyKeyboardMarkup.setKeyboard(keyboard);
-        return sendNewMessage(chatId, "test", replyKeyboardMarkup);
+        return sendNewMessage(chatId, BOT_START_MSG, replyKeyboardMarkup);
     }
 
 
