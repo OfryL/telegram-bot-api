@@ -9,8 +9,8 @@ import org.telegram.telegrambots.api.objects.Update;
 
 public interface IBotFlowProcessor {
 
-    public void init(IBotFlowController controller);
+     void init(IBotFlowController controller);
 
-    public void processUpdate(Update update);
+     void processUpdate(Update update);
 
 }

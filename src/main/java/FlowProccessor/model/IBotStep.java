@@ -5,11 +5,11 @@ import org.telegram.telegrambots.api.objects.Update;
 
 public interface IBotStep {
 
-    public String begin(String lastResult);
+     String begin(JSONObject flowInput);
 
-    public boolean isValid(Update update);
+     boolean isValid(Update update);
 
-    public void process(Update update, JSONObject flowInput);
+     boolean process(Update update, JSONObject flowInput);
 
-    public String getInvalidText();
+     String getInvalidText();
 }

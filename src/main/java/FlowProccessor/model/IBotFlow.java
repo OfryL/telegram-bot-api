@@ -11,13 +11,11 @@ import java.util.Set;
 
 public interface IBotFlow {
 
-    public <T extends BotBaseModelEntity> T getModel();
+     <T extends BotBaseModelEntity> T getModel();
 
-    public Set<BotTransition> getTransitions();
+     Set<BotTransition> getTransitions();
 
-    public BotBaseFlowEntity getActiveEntity();
+     BotBaseFlowEntity getActiveEntity();
 
-    public List<BotBaseFlowEntity> getFlowEntities();
-
-    public void complete();
+     void complete();
 }

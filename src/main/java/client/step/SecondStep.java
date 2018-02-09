@@ -11,9 +11,12 @@ public class SecondStep extends BotStep {
     }
 
     @Override
-    public String begin(String lastResult) {
+    public String begin(JSONObject flowInput) {
 
-        return "Hey, Please enter any string which length is greater then 5";
+        return String.format(
+                "I see your number is %s , Now Please enter any string which length is greater then 5",
+                flowInput.getString("userNumber")
+        );
     }
 
     @Override
@@ -25,9 +28,14 @@ public class SecondStep extends BotStep {
     }
 
     @Override
-    public void process(Update update, JSONObject flowInput) {
+    public boolean process(Update update, JSONObject flowInput) {
 
-        //Do something by services
+        flowInput.put(
+                "userText",
+                update.getMessage().getText()
+        );
+
+        return true;
     }
 
     @Override

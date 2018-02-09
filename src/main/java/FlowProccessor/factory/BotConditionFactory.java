@@ -1,6 +1,7 @@
 package FlowProccessor.factory;
 
 import FlowProccessor.model.impl.BotCondition;
+import org.json.JSONObject;
 
 /**
  * The type Bot condition factory.
@@ -27,12 +28,12 @@ public class BotConditionFactory {
         return instance;
     }
 
-    public BotCondition equalsCondition(final String expected) {
+    public BotCondition equalsCondition(final String expected, final String key) {
 
         return new BotCondition() {
             @Override
-            public boolean checkCondition(String stepResponse) {
-                return stepResponse.equalsIgnoreCase(expected);
+            public boolean checkCondition(JSONObject flowInput) {
+                return flowInput.getString(key).equalsIgnoreCase(expected);
             }
         };
     }
@@ -40,7 +41,7 @@ public class BotConditionFactory {
     public BotCondition always() {
         return new BotCondition() {
             @Override
-            public boolean checkCondition(String stepResponse) {
+            public boolean checkCondition(JSONObject flowInput) {
                 return true;
             }
         };

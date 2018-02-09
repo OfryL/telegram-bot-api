@@ -13,16 +13,14 @@ import static MessageProcessor.botState.defaultStates.BotAbortState.ABORT_COMMAN
 
 public interface IBotFlowController {
 
-    public Set<BotFlowFactory> getFlowFactories();
+     Set<BotFlowFactory> getFlowFactories();
 
-    public Set<BotCommand> getCommands();
+     Set<BotCommand> getCommands();
 
-    public void sendMessage(Update update, String text);
+     void sendMessage(Update update, String text);
 
-    public Long getUserIdentityNumber(Update update);
+     Long getUserIdentityNumber(Update update);
 
-    public SendMessage getDefaultResponse(Update update);
-
-    //TODO - Flow Transitions
+     SendMessage getDefaultResponse(Update update);
 
 }

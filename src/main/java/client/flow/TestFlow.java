@@ -15,6 +15,7 @@ public class TestFlow extends BotFlow {
      */
     public TestFlow(String id) {
         super(id);
+        model = new TestModel();
     }
 
     @Override

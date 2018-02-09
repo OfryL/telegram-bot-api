@@ -19,7 +19,7 @@ public class BotTransition<F extends BotBaseFlowEntity, T extends BotBaseFlowEnt
         return from;
     }
 
-    void setFrom(F from) {
+    private void setFrom(F from) {
         this.from = from;
     }
 
@@ -27,7 +27,7 @@ public class BotTransition<F extends BotBaseFlowEntity, T extends BotBaseFlowEnt
         return to;
     }
 
-    void setTo(T to) {
+    private void setTo(T to) {
         this.to = to;
     }
 
@@ -35,7 +35,7 @@ public class BotTransition<F extends BotBaseFlowEntity, T extends BotBaseFlowEnt
         return conditions;
     }
 
-    void setConditions(List<BotCondition> conditions) {
+    private void setConditions(List<BotCondition> conditions) {
         this.conditions = conditions;
     }
 }

@@ -1,5 +1,6 @@
 package FlowProccessor;
 
+import FlowProccessor.cache.BotFlowCacheWrapper;
 import FlowProccessor.cache.CacheManager;
 import FlowProccessor.controller.IBotFlowController;
 import FlowProccessor.factory.BotFlowFactory;
@@ -9,6 +10,8 @@ import org.json.JSONObject;
 import org.telegram.telegrambots.api.objects.Update;
 
 import java.util.List;
+import java.util.Set;
+import java.util.function.Predicate;
 
 /**
  * The type Flow processor.
@@ -68,7 +71,8 @@ public class BotFlowProcessor implements IBotFlowProcessor {
         if (flow == null) {
             //No command / Active cached flow was found, Sending default
             controller.getDefaultResponse(update);
-        } else {
+        }
+        else {
             resumeFlow(flow, userIdentifier, update);
         }
 
@@ -86,7 +90,8 @@ public class BotFlowProcessor implements IBotFlowProcessor {
         if (flowId != null) {
 
             startFlow(flowId, userIdentifier, update);
-        } else {
+        }
+        else {
 
             controller.getDefaultResponse(update);
         }
@@ -119,38 +124,44 @@ public class BotFlowProcessor implements IBotFlowProcessor {
 
             BotStep activeStep = (BotStep) activeEntity;
 
-            boolean completed = processStep(activeStep, update);
+            JSONObject flowCachedInput = cacheManager.getFlowCachedInput(userIdentifier);
+
+            boolean completed = processStep(
+                    activeStep,
+                    flowCachedInput,
+                    update
+            );
 
             //If current execution succeeded
             if (completed) {
 
                 //Search for transitions
-                //TODO Change this to return list of transitions
-                BotTransition nextTransition = EntityLocator.locateTransition(flow, activeStep);
+                Set<BotTransition> possibleTransitions = EntityLocator.locateTransitions(flow, activeStep);
 
-                //TODO Check possible transitions and set next
+                BotTransition nextTransition = getNextTransition(possibleTransitions, flowCachedInput);
 
-                if (nextTransition == null) {
-
-                    completeFlow(flow, userIdentifier, update);
-                } else {
+                if (nextTransition != null) {
 
                     //Getting next step
                     BotBaseFlowEntity nextEntity = nextTransition.getTo();
 
+                    flow.setActiveEntity(nextEntity);
+
                     beginFlowEntity(nextEntity, userIdentifier, update);
                 }
+                else {
 
+                    completeFlow(flow, userIdentifier, update);
+                }
             }
-        } else {
-
-           startFlow(activeEntity.getId(), userIdentifier, update);
-
         }
+        else {
 
+            startFlow(activeEntity.getId(), userIdentifier, update);
+        }
     }
 
-    private boolean processStep(BotStep step, Update update) {
+    private boolean processStep(BotStep step, JSONObject flowInput, Update update) {
 
         if (!step.isValid(update)) {
 
@@ -159,25 +170,23 @@ public class BotFlowProcessor implements IBotFlowProcessor {
         }
 
         //Processing
-        //TODO - Should inject cached flow json input
-        //TODO - Should return the result of the
-        step.process(update, new JSONObject());
-
-        return true;
+        return step.process(update, flowInput);
     }
 
     private void beginFlowEntity(BotBaseFlowEntity entity, String userIdentifier, Update update) {
 
         if (entity instanceof BotStep) {
 
-            //TODO - Model should be injected to this
-            String result = ((BotStep) entity).begin("");
+            String result = ((BotStep) entity).begin(
+                    cacheManager.getFlowCachedInput(userIdentifier)
+            );
 
-            if(result != null) {
+            if (result != null) {
 
                 controller.sendMessage(update, result);
             }
-        } else {
+        }
+        else {
 
             //Start a new flow
             startFlow(entity.getId(), userIdentifier, update);
@@ -188,34 +197,55 @@ public class BotFlowProcessor implements IBotFlowProcessor {
 
         flow.setDone(true);
 
-        //TODO Resolve flow model
-        flow.getFlowModel().setFlowInput(new JSONObject());
+        JSONObject flowCachedInput = cacheManager.getFlowCachedInput(userIdentifier);
+        flow.getModel().setFlowInput(flowCachedInput);
 
         flow.complete();
 
-        List<BotFlow> flows = cacheManager.getUserFlows().get(userIdentifier);
+        BotFlowCacheWrapper parentFlowWrapper = cacheManager.getParentFlow(userIdentifier);
 
-        if (flows.size() > 1) {
+        cacheManager.clearFlow(userIdentifier, flow);
 
-            //Meaning we have parent flow, getting parent
-            BotFlow parentFlow = flows.get(flows.size() - 2);
+        if (parentFlowWrapper != null) {
+
+            BotFlow parentFlow = parentFlowWrapper.getFlow();
 
             //Searching for parent flow transition
-            BotTransition nextTransition = EntityLocator.locateTransition(parentFlow, flow);
+            Set<BotTransition> possibleTransitions = EntityLocator.locateTransitions(parentFlow, flow);
+
+            BotTransition nextTransition = getNextTransition(possibleTransitions, parentFlowWrapper.getFlowInput());
 
             if (nextTransition != null) {
 
+                parentFlow.setActiveEntity(nextTransition.getTo());
                 beginFlowEntity(nextTransition.getTo(), userIdentifier, update);
-            } else {
+            }
+            else {
 
                 //Completing parent flow
-                parentFlow.complete();
+                completeFlow(parentFlow, userIdentifier, update);
             }
+        }
+    }
 
-        } else {
+    @SuppressWarnings("unchecked")
+    private BotTransition getNextTransition(Set<BotTransition> transitions, JSONObject flowCachedInput) {
 
-            cacheManager.clearFlow(userIdentifier, flow);
+        BotTransition nextTransition = null;
+
+        for(BotTransition transition : transitions) {
+
+            List<BotCondition> conditions = transition.getConditions();
+
+            Predicate<BotCondition> predict = c -> c.checkCondition(flowCachedInput);
+
+            if(conditions.stream().allMatch(predict)){
+
+                nextTransition = transition;
+                break;
+            }
         }
 
+        return nextTransition;
     }
 }

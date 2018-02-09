@@ -13,5 +13,5 @@ public interface IBotFlowModel {
      *
      * @param flowInput the flow input
      */
-    public void setFlowInput(JSONObject flowInput);
+     void setFlowInput(JSONObject flowInput);
 }

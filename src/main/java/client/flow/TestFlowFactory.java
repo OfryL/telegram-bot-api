@@ -36,6 +36,7 @@ public class TestFlowFactory extends BotFlowFactory {
         transitions.add(transition);
 
         flow.setTransitions(transitions);
+        flow.setActiveEntity(step1);
 
         return flow;
     }

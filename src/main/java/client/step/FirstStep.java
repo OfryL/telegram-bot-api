@@ -11,7 +11,7 @@ public class FirstStep extends BotStep {
     }
 
     @Override
-    public String begin(String lastResult) {
+    public String begin(JSONObject flowInput) {
 
         return "Hey, Please enter any number";
     }
@@ -33,9 +33,14 @@ public class FirstStep extends BotStep {
     }
 
     @Override
-    public void process(Update update, JSONObject flowInput) {
+    public boolean process(Update update, JSONObject flowInput) {
 
-        //Do something by services
+        flowInput.put(
+                "userNumber",
+                update.getMessage().getText()
+        );
+
+        return true;
     }
 
     @Override

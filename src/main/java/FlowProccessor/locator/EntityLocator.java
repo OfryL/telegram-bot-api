@@ -6,6 +6,8 @@ import FlowProccessor.model.impl.*;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public final class EntityLocator {
 
@@ -31,33 +33,13 @@ public final class EntityLocator {
         return flowFactory.orElse(null);
     }
 
-    public static BotBaseFlowEntity locateFlowEnttiy(BotFlow flow, final String entityId) {
-
-        List<BotBaseFlowEntity> entities = flow.getFlowEntities();
-
-        Optional<BotBaseFlowEntity> entity = entities.stream().filter(e -> e.getId().equals(entityId)).findFirst();
-
-        if(!entity.isPresent()) {
-
-            throw new IllegalArgumentException(
-                    String.format(
-                            "Could not find entity %s in flow %s",
-                            entityId,
-                            flow.getId()
-                    )
-            );
-        }
-
-        return entity.get();
-    }
-
-    public static BotTransition locateTransition(BotFlow flow, BotBaseFlowEntity entity) {
+    public static Set<BotTransition> locateTransitions(BotFlow flow, BotBaseFlowEntity entity) {
 
         Set<BotTransition> transitions = flow.getTransitions();
 
-        Optional<BotTransition> transition = transitions.stream().filter( t -> t.getFrom().equals(entity.getId())).findFirst();
+        Stream<BotTransition> matched = transitions.stream().filter(t -> t.getFrom().getId().equals(entity.getId()));
 
-        return transition.orElse(null);
+        return matched.collect(Collectors.toSet());
     }
 
 }

@@ -15,10 +15,6 @@ public abstract class BotFlow extends BotBaseFlowEntity implements IBotFlow {
 
     private Set<BotTransition> transitions;
 
-    private IBotFlowModel flowModel;
-
-    private List<BotBaseFlowEntity> flowEntities;
-
     private BotBaseFlowEntity activeEntity;
 
     /**
@@ -56,36 +52,14 @@ public abstract class BotFlow extends BotBaseFlowEntity implements IBotFlow {
         this.transitions = transitions;
     }
 
-    public IBotFlowModel getFlowModel() {
-        return flowModel;
-    }
-
-    public void setFlowModel(IBotFlowModel flowModel) {
-        this.flowModel = flowModel;
-    }
-
     @Override
     public BotBaseFlowEntity getActiveEntity() {
-
-        if(activeEntity == null) {
-
-            return flowEntities.get(0);
-        }
 
         return activeEntity;
     }
 
     public void setActiveEntity(BotBaseFlowEntity activeEntity) {
         this.activeEntity = activeEntity;
-    }
-
-    @Override
-    public List<BotBaseFlowEntity> getFlowEntities() {
-        return flowEntities;
-    }
-
-    public void setFlowEntities(List<BotBaseFlowEntity> flowEntities) {
-        this.flowEntities = flowEntities;
     }
 
     @Override

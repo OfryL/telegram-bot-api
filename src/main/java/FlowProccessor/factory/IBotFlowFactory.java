@@ -13,5 +13,5 @@ public interface IBotFlowFactory {
      * @param <T> the type parameter
      * @return the t
      */
-    public <T extends BotFlow> T createFlow();
+    BotFlow createFlow();
 }

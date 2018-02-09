@@ -2,9 +2,9 @@ package FlowProccessor.model;
 
 public interface IBotCommand {
 
-    public String getIdentifier();
+     String getIdentifier();
 
-    public String getFlowEntityId();
+     String getFlowEntityId();
 
-    public String getMessage();
+     String getMessage();
 }
