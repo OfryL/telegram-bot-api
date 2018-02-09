@@ -1,6 +1,8 @@
 package FlowProccessor.model.impl;
 
 import FlowProccessor.model.IBotCommand;
+import org.telegram.telegrambots.api.methods.send.SendMessage;
+import org.telegram.telegrambots.api.objects.Update;
 
 /**
  * The type Bot command.
@@ -36,7 +38,7 @@ public class BotCommand implements IBotCommand {
     }
 
     @Override
-    public String getMessage() {
+    public SendMessage getMessage(Update update) {
         return null;
     }
 }

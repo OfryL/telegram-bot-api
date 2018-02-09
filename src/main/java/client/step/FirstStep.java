@@ -2,6 +2,7 @@ package client.step;
 
 import FlowProccessor.model.impl.BotStep;
 import org.json.JSONObject;
+import org.telegram.telegrambots.api.methods.send.SendMessage;
 import org.telegram.telegrambots.api.objects.Update;
 
 public class FirstStep extends BotStep {
@@ -11,9 +12,9 @@ public class FirstStep extends BotStep {
     }
 
     @Override
-    public String begin(JSONObject flowInput) {
+    public SendMessage begin(JSONObject flowInput) {
 
-        return "Hey, Please enter any number";
+        return this.sendNewMessage("Hey, Please enter any number");
     }
 
     @Override
@@ -44,7 +45,8 @@ public class FirstStep extends BotStep {
     }
 
     @Override
-    public String getInvalidText() {
-        return "Not a valid number!";
+    public SendMessage invalidMessage() {
+
+        return this.sendNewMessage("Not a valid number!");
     }
 }

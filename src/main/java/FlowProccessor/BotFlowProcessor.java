@@ -7,6 +7,7 @@ import FlowProccessor.factory.BotFlowFactory;
 import FlowProccessor.locator.EntityLocator;
 import FlowProccessor.model.impl.*;
 import org.json.JSONObject;
+import org.telegram.telegrambots.api.methods.send.SendMessage;
 import org.telegram.telegrambots.api.objects.Update;
 
 import java.util.List;
@@ -80,9 +81,14 @@ public class BotFlowProcessor implements IBotFlowProcessor {
 
     private void processCommand(BotCommand command, String userIdentifier, Update update) {
 
-        if (command.getMessage() != null) {
+        SendMessage commandMessage = command.getMessage(update);
 
-            controller.sendMessage(update, command.getMessage());
+        if (commandMessage != null) {
+
+            controller.sendMessage(
+                    update,
+                    commandMessage
+            );
         }
 
         String flowId = command.getFlowEntityId();
@@ -165,7 +171,11 @@ public class BotFlowProcessor implements IBotFlowProcessor {
 
         if (!step.isValid(update)) {
 
-            controller.sendMessage(update, step.getInvalidText());
+            SendMessage invalidMessage = step.invalidMessage();
+            if(invalidMessage != null) {
+
+                controller.sendMessage(update, invalidMessage);
+            }
             return false;
         }
 
@@ -177,13 +187,13 @@ public class BotFlowProcessor implements IBotFlowProcessor {
 
         if (entity instanceof BotStep) {
 
-            String result = ((BotStep) entity).begin(
+            SendMessage message = ((BotStep) entity).begin(
                     cacheManager.getFlowCachedInput(userIdentifier)
             );
 
-            if (result != null) {
+            if (message != null) {
 
-                controller.sendMessage(update, result);
+                controller.sendMessage(update, message);
             }
         }
         else {
@@ -200,7 +210,12 @@ public class BotFlowProcessor implements IBotFlowProcessor {
         JSONObject flowCachedInput = cacheManager.getFlowCachedInput(userIdentifier);
         flow.getModel().setFlowInput(flowCachedInput);
 
-        flow.complete();
+        SendMessage completeMessage = flow.complete(update);
+
+        if(completeMessage != null){
+
+            controller.sendMessage(update,completeMessage);
+        }
 
         BotFlowCacheWrapper parentFlowWrapper = cacheManager.getParentFlow(userIdentifier);
 

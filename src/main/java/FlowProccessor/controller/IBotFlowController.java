@@ -17,7 +17,7 @@ public interface IBotFlowController {
 
      Set<BotCommand> getCommands();
 
-     void sendMessage(Update update, String text);
+     void sendMessage(Update update, SendMessage message);
 
      Long getUserIdentityNumber(Update update);
 

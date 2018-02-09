@@ -2,6 +2,7 @@ package client.step;
 
 import FlowProccessor.model.impl.BotStep;
 import org.json.JSONObject;
+import org.telegram.telegrambots.api.methods.send.SendMessage;
 import org.telegram.telegrambots.api.objects.Update;
 
 public class SecondStep extends BotStep {
@@ -11,11 +12,13 @@ public class SecondStep extends BotStep {
     }
 
     @Override
-    public String begin(JSONObject flowInput) {
+    public SendMessage begin(JSONObject flowInput) {
 
-        return String.format(
-                "I see your number is %s , Now Please enter any string which length is greater then 5",
-                flowInput.getString("userNumber")
+        return this.sendNewMessage(
+                String.format(
+                        "I see your number is %s , Now Please enter any string which length is greater then 5",
+                        flowInput.getString("userNumber")
+                )
         );
     }
 
@@ -39,8 +42,7 @@ public class SecondStep extends BotStep {
     }
 
     @Override
-    public String getInvalidText() {
-
-        return "No enought chars";
+    public SendMessage invalidMessage() {
+        return this.sendNewMessage("No enought chars");
     }
 }

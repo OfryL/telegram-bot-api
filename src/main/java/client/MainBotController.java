@@ -71,9 +71,9 @@ public class MainBotController extends BotFlowController {
     }
 
     @Override
-    public void sendMessage(Update update, String text) {
+    public void sendMessage(Update update, SendMessage message) {
 
-        SendMessage message = new SendMessage().setText(text).setChatId(getUserIdentityNumber(update));
+        message.setChatId(getUserIdentityNumber(update));
 
         executeSendMessage(message);
     }
