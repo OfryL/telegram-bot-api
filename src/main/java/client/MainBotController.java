@@ -7,6 +7,7 @@ import FlowProccessor.model.impl.BotCommand;
 import MessageProcessor.BotMessageProcessor;
 import MessageProcessor.BotMessageProcessorImp;
 import client.command.StartCommand;
+import client.config.ProcessorConfig;
 import client.flow.TestFlowFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,11 +33,11 @@ public class MainBotController extends BotFlowController {
     }
 
     public String getBotUsername() {
-        return "test";
+        return ProcessorConfig.BOT_USER;
     }
 
     public String getBotToken() {
-        return "500687697:AAH0El2BxoTqqaF89dAJkNUTXE4C4hlILtw";
+        return ProcessorConfig.BOT_TOKEN;
     }
 
     private void executeSendMessage(SendMessage sendMessage) {
