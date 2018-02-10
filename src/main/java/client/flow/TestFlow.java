@@ -32,12 +32,16 @@ public class TestFlow extends BotFlow {
     @Override
     public SendMessage complete(Update update) {
 
+        String message = "Finished flow, User number is : " + model.getNumber();
+
+        message = String.format(
+                "%s, %s",
+                message,
+                model.isConfirmed() ? "User was validated by specific text" : "User was validated by text length!"
+        );
+
         return new SendMessage().setText(
-                String.format(
-                        "Finished flow, User number is: %s, User Text is: %s",
-                        model.getNumber(),
-                        model.getText()
-                )
+                message
         );
     }
 }

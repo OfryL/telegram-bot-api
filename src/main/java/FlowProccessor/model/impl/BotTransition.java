@@ -1,5 +1,7 @@
 package FlowProccessor.model.impl;
 
+import com.google.common.collect.Lists;
+
 import java.util.List;
 
 public class BotTransition<F extends BotBaseFlowEntity, T extends BotBaseFlowEntity> {
@@ -13,6 +15,11 @@ public class BotTransition<F extends BotBaseFlowEntity, T extends BotBaseFlowEnt
         this.setFrom(from);
         this.setTo(to);
         this.setConditions(conditions);
+    }
+
+    public BotTransition(F from, T to, BotCondition condition) {
+
+         this(from, to, Lists.newArrayList(condition));
     }
 
     public F getFrom() {

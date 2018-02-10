@@ -21,6 +21,6 @@ public interface IBotFlowController {
 
      Long getUserIdentityNumber(Update update);
 
-     SendMessage getDefaultResponse(Update update);
+     void sendDefaultResponse(Update update);
 
 }

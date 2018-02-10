@@ -80,10 +80,18 @@ public class CacheManager {
                     .filter(flowWrapper -> !flowWrapper.getFlow().getId().equals(flow.getId()))
                     .collect(Collectors.toList());
 
-            this.userFlows.put(
-                    userIdentifier,
-                    currentFlows
-            );
+            if(currentFlows.size() > 0) {
+
+                this.userFlows.put(
+                        userIdentifier,
+                        currentFlows
+                );
+            }
+            else{
+
+                this.userFlows.remove(userIdentifier);
+            }
+
         }
 
     }

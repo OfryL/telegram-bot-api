@@ -4,6 +4,12 @@ import FlowProccessor.model.impl.BotStep;
 import org.json.JSONObject;
 import org.telegram.telegrambots.api.methods.send.SendMessage;
 import org.telegram.telegrambots.api.objects.Update;
+import org.telegram.telegrambots.api.objects.replykeyboard.ReplyKeyboardMarkup;
+import org.telegram.telegrambots.api.objects.replykeyboard.buttons.KeyboardButton;
+import org.telegram.telegrambots.api.objects.replykeyboard.buttons.KeyboardRow;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class FirstStep extends BotStep {
 
@@ -14,7 +20,17 @@ public class FirstStep extends BotStep {
     @Override
     public SendMessage begin(JSONObject flowInput) {
 
-        return this.sendNewMessage("Hey, Please enter any number");
+/*       ReplyKeyboardMarkup replyKeyboardMarkup = new ReplyKeyboardMarkup();
+        replyKeyboardMarkup.setSelective(true);
+        replyKeyboardMarkup.setResizeKeyboard(true);
+        replyKeyboardMarkup.setOneTimeKeyboard(false);
+        List<KeyboardRow> keyboard = new ArrayList<>();
+        KeyboardRow row = new KeyboardRow();
+        KeyboardButton keyboardButton = new KeyboardButton().setText("Share Contact").setRequestContact(true);
+        row.add(keyboardButton);
+        keyboard.add(row);
+        replyKeyboardMarkup.setKeyboard(keyboard);*/
+        return sendNewMessage("Hey, Please enter any number");
     }
 
     @Override

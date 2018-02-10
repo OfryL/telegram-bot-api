@@ -69,12 +69,12 @@ public class BotFlowProcessor implements IBotFlowProcessor {
             return;
         }
 
-        if (flow == null) {
-            //No command / Active cached flow was found, Sending default
-            controller.getDefaultResponse(update);
+        if (flow != null) {
+            resumeFlow(flow, userIdentifier, update);
         }
         else {
-            resumeFlow(flow, userIdentifier, update);
+            //No command / Active cached flow was found, Sending default
+            controller.sendDefaultResponse(update);
         }
 
     }
@@ -83,13 +83,7 @@ public class BotFlowProcessor implements IBotFlowProcessor {
 
         SendMessage commandMessage = command.getMessage(update);
 
-        if (commandMessage != null) {
-
-            controller.sendMessage(
-                    update,
-                    commandMessage
-            );
-        }
+        sendIfNotNull(update, commandMessage);
 
         String flowId = command.getFlowEntityId();
 
@@ -99,7 +93,7 @@ public class BotFlowProcessor implements IBotFlowProcessor {
         }
         else {
 
-            controller.getDefaultResponse(update);
+            controller.sendDefaultResponse(update);
         }
     }
 
@@ -172,10 +166,7 @@ public class BotFlowProcessor implements IBotFlowProcessor {
         if (!step.isValid(update)) {
 
             SendMessage invalidMessage = step.invalidMessage();
-            if(invalidMessage != null) {
-
-                controller.sendMessage(update, invalidMessage);
-            }
+            sendIfNotNull(update, invalidMessage);
             return false;
         }
 
@@ -191,10 +182,7 @@ public class BotFlowProcessor implements IBotFlowProcessor {
                     cacheManager.getFlowCachedInput(userIdentifier)
             );
 
-            if (message != null) {
-
-                controller.sendMessage(update, message);
-            }
+            sendIfNotNull(update, message);
         }
         else {
 
@@ -212,10 +200,7 @@ public class BotFlowProcessor implements IBotFlowProcessor {
 
         SendMessage completeMessage = flow.complete(update);
 
-        if(completeMessage != null){
-
-            controller.sendMessage(update,completeMessage);
-        }
+        sendIfNotNull(update, completeMessage);
 
         BotFlowCacheWrapper parentFlowWrapper = cacheManager.getParentFlow(userIdentifier);
 
@@ -262,5 +247,13 @@ public class BotFlowProcessor implements IBotFlowProcessor {
         }
 
         return nextTransition;
+    }
+
+    private void sendIfNotNull(Update update, SendMessage message) {
+
+        if (message != null) {
+
+            controller.sendMessage(update, message);
+        }
     }
 }

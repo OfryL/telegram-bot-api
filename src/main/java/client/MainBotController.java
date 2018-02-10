@@ -83,10 +83,9 @@ public class MainBotController extends BotFlowController {
     }
 
     @Override
-    public SendMessage getDefaultResponse(Update update) {
+    public void sendDefaultResponse(Update update) {
 
-        SendMessage message = new SendMessage().setText("Dunno what to do!").setChatId(getUserIdentityNumber(update));
+        this.sendMessage(update, new SendMessage().setText("Dunno what to do!"));
 
-        return message;
     }
 }

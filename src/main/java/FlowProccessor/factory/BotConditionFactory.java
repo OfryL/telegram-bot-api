@@ -47,4 +47,15 @@ public class BotConditionFactory {
         };
     }
 
+    public BotCondition oppositeOf(BotCondition condition) {
+
+        return new BotCondition() {
+            @Override
+            public boolean checkCondition(JSONObject flowInput) {
+                return !condition.checkCondition(flowInput);
+            }
+        };
+
+    }
+
 }
