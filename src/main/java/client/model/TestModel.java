@@ -3,13 +3,7 @@ package client.model;
 import FlowProccessor.model.IBotFlowModel;
 import FlowProccessor.model.impl.BotBaseModelEntity;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.json.JSONObject;
-import org.telegram.telegrambots.api.objects.Message;
-import org.telegram.telegrambots.api.objects.replykeyboard.ApiResponse;
-
-import java.io.IOException;
 
 /**
  * The type Test model.
@@ -19,7 +13,6 @@ public class TestModel extends BotBaseModelEntity implements IBotFlowModel {
     private static final String NUMBER_FIELD = "userNumber";
     private static final String TEXT_FIELD = "userText";
     private static final String IS_CONFIRMED_FIELD = "confirmedText";
-
 
     @JsonProperty(NUMBER_FIELD)
     private String number;
@@ -32,7 +25,6 @@ public class TestModel extends BotBaseModelEntity implements IBotFlowModel {
 
     @Override
     public void setFlowInput(JSONObject flowInput) {
-
 
         number = flowInput.getString("userNumber");
         text = flowInput.optString("userText");

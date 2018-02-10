@@ -29,6 +29,11 @@ public abstract class BotStep extends BotBaseFlowEntity implements IBotStep {
     }
 
 
+    @Override
+    public void complete(Update update, JSONObject flowInput) {
+
+    }
+
     public SendMessage sendNewMessage(String text) {
         return new SendMessage().setText(text);
     }

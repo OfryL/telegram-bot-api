@@ -126,33 +126,24 @@ public class BotFlowProcessor implements IBotFlowProcessor {
 
             JSONObject flowCachedInput = cacheManager.getFlowCachedInput(userIdentifier);
 
-            boolean completed = processStep(
+            boolean processCompleted = processStep(
                     activeStep,
                     flowCachedInput,
                     update
             );
 
             //If current execution succeeded
-            if (completed) {
+            if (processCompleted) {
+
+                activeStep.complete(update, flowCachedInput);
 
                 //Search for transitions
                 Set<BotTransition> possibleTransitions = EntityLocator.locateTransitions(flow, activeStep);
 
                 BotTransition nextTransition = getNextTransition(possibleTransitions, flowCachedInput);
 
-                if (nextTransition != null) {
+                doNextTransition(userIdentifier, update, flow, nextTransition);
 
-                    //Getting next step
-                    BotBaseFlowEntity nextEntity = nextTransition.getTo();
-
-                    flow.setActiveEntity(nextEntity);
-
-                    beginFlowEntity(nextEntity, userIdentifier, update);
-                }
-                else {
-
-                    completeFlow(flow, userIdentifier, update);
-                }
             }
         }
         else {
@@ -215,16 +206,21 @@ public class BotFlowProcessor implements IBotFlowProcessor {
 
             BotTransition nextTransition = getNextTransition(possibleTransitions, parentFlowWrapper.getFlowInput());
 
-            if (nextTransition != null) {
+            doNextTransition(userIdentifier, update, parentFlow, nextTransition);
+        }
+    }
 
-                parentFlow.setActiveEntity(nextTransition.getTo());
-                beginFlowEntity(nextTransition.getTo(), userIdentifier, update);
-            }
-            else {
+    private void doNextTransition(String userIdentifier, Update update, BotFlow flow, BotTransition nextTransition) {
 
-                //Completing parent flow
-                completeFlow(parentFlow, userIdentifier, update);
-            }
+        if (nextTransition != null) {
+
+            flow.setActiveEntity(nextTransition.getTo());
+            beginFlowEntity(nextTransition.getTo(), userIdentifier, update);
+        }
+        else {
+
+            //Completing parent flow
+            completeFlow(flow, userIdentifier, update);
         }
     }
 

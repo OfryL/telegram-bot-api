@@ -6,11 +6,13 @@ import org.telegram.telegrambots.api.objects.Update;
 
 public interface IBotStep {
 
-     SendMessage begin(JSONObject flowInput);
+    SendMessage begin(JSONObject flowInput);
 
-     boolean isValid(Update update);
+    boolean isValid(Update update);
 
-     boolean process(Update update, JSONObject flowInput);
+    boolean process(Update update, JSONObject flowInput);
 
-     SendMessage invalidMessage();
+    void complete(Update update, JSONObject flowInput);
+
+    SendMessage invalidMessage();
 }
