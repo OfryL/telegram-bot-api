@@ -4,8 +4,6 @@ import FlowProccessor.BotFlowProcessor;
 import FlowProccessor.controller.BotFlowController;
 import FlowProccessor.factory.BotFlowFactory;
 import FlowProccessor.model.impl.BotCommand;
-import MessageProcessor.BotMessageProcessor;
-import MessageProcessor.BotMessageProcessorImp;
 import client.command.StartCommand;
 import client.config.ProcessorConfig;
 import client.flow.TestFlowFactory;
@@ -13,11 +11,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.telegram.telegrambots.api.methods.send.SendMessage;
 import org.telegram.telegrambots.api.objects.Update;
-import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.exceptions.TelegramApiException;
 
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 public class MainBotController extends BotFlowController {

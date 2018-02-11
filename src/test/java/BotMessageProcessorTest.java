@@ -1,3 +1,4 @@
+/*
 import MessageProcessor.BotMessageProcessor;
 import MessageProcessor.BotMessageProcessorImp;
 import MessageProcessor.botState.BotStateData;
@@ -52,3 +53,4 @@ public class BotMessageProcessorTest {
         return new BotUserImp(new User(), botStateData);
     }
 }
+*/

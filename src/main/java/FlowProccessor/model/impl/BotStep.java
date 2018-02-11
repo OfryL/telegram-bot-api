@@ -30,8 +30,9 @@ public abstract class BotStep extends BotBaseFlowEntity implements IBotStep {
 
 
     @Override
-    public void complete(Update update, JSONObject flowInput) {
+    public SendMessage complete(Update update, JSONObject flowInput) {
 
+        return null;
     }
 
     public SendMessage sendNewMessage(String text) {

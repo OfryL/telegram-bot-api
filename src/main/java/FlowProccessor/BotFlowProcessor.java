@@ -61,8 +61,7 @@ public class BotFlowProcessor implements IBotFlowProcessor {
         String userIdentifier = String.valueOf(controller.getUserIdentityNumber(update));
 
         BotFlow flow = cacheManager.getActiveFlow(userIdentifier);
-        String message = update.getMessage().getText();
-        BotCommand command = EntityLocator.locateCommand(cacheManager.getCommands(), message);
+        BotCommand command = EntityLocator.locateCommand(cacheManager.getCommands(), update);
 
         if (command != null) {
             processCommand(command, userIdentifier, update);
@@ -135,7 +134,8 @@ public class BotFlowProcessor implements IBotFlowProcessor {
             //If current execution succeeded
             if (processCompleted) {
 
-                activeStep.complete(update, flowCachedInput);
+                SendMessage message = activeStep.complete(update, flowCachedInput);
+                sendIfNotNull(update, message);
 
                 //Search for transitions
                 Set<BotTransition> possibleTransitions = EntityLocator.locateTransitions(flow, activeStep);

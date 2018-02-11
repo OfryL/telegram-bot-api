@@ -2,6 +2,7 @@ package FlowProccessor.locator;
 
 import FlowProccessor.factory.BotFlowFactory;
 import FlowProccessor.model.impl.*;
+import org.telegram.telegrambots.api.objects.Update;
 
 import java.util.List;
 import java.util.Optional;
@@ -11,7 +12,9 @@ import java.util.stream.Stream;
 
 public final class EntityLocator {
 
-    public static BotCommand locateCommand(Set<BotCommand> commands, final String commandString) {
+    public static BotCommand locateCommand(Set<BotCommand> commands, final Update update) {
+
+        String commandString = update.getMessage() != null ? update.getMessage().getText() : "";
 
          Optional<BotCommand> command = commands.stream().filter(c -> c.getIdentifier().equals(commandString)).findFirst();
 

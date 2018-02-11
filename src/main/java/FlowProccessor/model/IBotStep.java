@@ -12,7 +12,7 @@ public interface IBotStep {
 
     boolean process(Update update, JSONObject flowInput);
 
-    void complete(Update update, JSONObject flowInput);
+    SendMessage complete(Update update, JSONObject flowInput);
 
     SendMessage invalidMessage();
 }
