@@ -1,6 +1,7 @@
 package poc.flow;
 
 import FlowProccessor.model.impl.BotFlow;
+import org.json.JSONObject;
 import org.telegram.telegrambots.api.methods.send.SendMessage;
 import org.telegram.telegrambots.api.objects.Update;
 import poc.model.MusicModel;
@@ -30,9 +31,14 @@ public class MusicInfoFlow extends BotFlow {
     }
 
     @Override
-    public SendMessage complete(Update update) {
+    public SendMessage complete(Update update, JSONObject parentFlowInput) {
 
         String message = "Thanks for filling up music your favorite information";
+
+        parentFlowInput.put(
+                "musicModel",
+                this.getModel()
+        );
 
         return new SendMessage().setText(
                 message

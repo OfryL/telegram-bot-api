@@ -6,6 +6,7 @@ import org.telegram.telegrambots.api.methods.send.SendMessage;
 import org.telegram.telegrambots.api.objects.CallbackQuery;
 import org.telegram.telegrambots.api.objects.Update;
 import org.telegram.telegrambots.api.objects.replykeyboard.InlineKeyboardMarkup;
+import org.telegram.telegrambots.api.objects.replykeyboard.ReplyKeyboardRemove;
 import org.telegram.telegrambots.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 
 import java.util.ArrayList;
@@ -19,7 +20,7 @@ public class ChooseInfoTypeStep extends BotStep {
         super(id);
     }
 
-        Map<String,String> options = new HashMap<>();
+    private Map<String, String> options = new HashMap<>();
 
     @Override
     public SendMessage begin(JSONObject flowInput) {
@@ -38,7 +39,7 @@ public class ChooseInfoTypeStep extends BotStep {
         List<List<InlineKeyboardButton>> rowsInline = new ArrayList<>();
         List<InlineKeyboardButton> rowInline = new ArrayList<>();
 
-        options.forEach((k,v) -> {
+        options.forEach((k, v) -> {
 
             rowInline.add(new InlineKeyboardButton().setText(v).setCallbackData(k));
         });
@@ -55,7 +56,7 @@ public class ChooseInfoTypeStep extends BotStep {
 
         CallbackQuery query = update.getCallbackQuery();
 
-        if(query != null) {
+        if (query != null) {
 
             String key = query.getData();
 
@@ -80,5 +81,18 @@ public class ChooseInfoTypeStep extends BotStep {
     public SendMessage invalidMessage() {
 
         return this.sendNewMessage("You must pick one of the options!");
+    }
+
+    @Override
+    public SendMessage complete(Update update, JSONObject flowInput) {
+
+        ReplyKeyboardRemove replyKeyboardRemove = new ReplyKeyboardRemove();
+
+        String message = String.format(
+                "Starting the %s Info flow!",
+                update.getCallbackQuery().getData().equalsIgnoreCase("music") ? "Music" : "Contact"
+        );
+
+        return new SendMessage().setChatId(update.getCallbackQuery().getMessage().getChatId()).setText(message).setReplyMarkup(replyKeyboardRemove);
     }
 }

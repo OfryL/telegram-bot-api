@@ -102,7 +102,7 @@ public class CacheManager {
 
         int size = flowWrappers.size();
 
-        return size > 1 ? flowWrappers.get(size - 2) : null;
+        return size > 1 ? flowWrappers.get(size - 2) : new BotFlowCacheWrapper();
     }
 
     public JSONObject getFlowCachedInput(String userIdentifier) {

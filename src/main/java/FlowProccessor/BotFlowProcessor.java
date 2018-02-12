@@ -184,22 +184,23 @@ public class BotFlowProcessor implements IBotFlowProcessor {
 
     private void completeFlow(BotFlow flow, String userIdentifier, Update update) {
 
+        //First Resolving current flow model
         flow.setDone(true);
 
         JSONObject flowCachedInput = cacheManager.getFlowCachedInput(userIdentifier);
         flow.getModel().setFlowInput(flowCachedInput);
 
-        SendMessage completeMessage = flow.complete(update);
-
+        //We complete current flow with inject of the Parent flow model ( if exists
+        BotFlowCacheWrapper parentFlowWrapper = cacheManager.getParentFlow(userIdentifier);
+        SendMessage completeMessage = flow.complete(update, parentFlowWrapper.getFlowInput());
         sendIfNotNull(update, completeMessage);
 
-        BotFlowCacheWrapper parentFlowWrapper = cacheManager.getParentFlow(userIdentifier);
-
+        //Clearing current flow from cache
         cacheManager.clearFlow(userIdentifier, flow);
 
-        if (parentFlowWrapper != null) {
-
-            BotFlow parentFlow = parentFlowWrapper.getFlow();
+        //Continue to parent flow itself if exists
+        BotFlow parentFlow = parentFlowWrapper.getFlow();
+        if (parentFlow != null) {
 
             //Searching for parent flow transition
             Set<BotTransition> possibleTransitions = EntityLocator.locateTransitions(parentFlow, flow);

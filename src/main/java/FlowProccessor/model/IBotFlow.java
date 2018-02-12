@@ -5,6 +5,7 @@ import FlowProccessor.model.impl.BotBaseFlowEntity;
 import FlowProccessor.model.impl.BotBaseModelEntity;
 import FlowProccessor.model.impl.BotStep;
 import FlowProccessor.model.impl.BotTransition;
+import org.json.JSONObject;
 import org.telegram.telegrambots.api.methods.send.SendMessage;
 import org.telegram.telegrambots.api.objects.Update;
 
@@ -19,5 +20,5 @@ public interface IBotFlow {
 
      BotBaseFlowEntity getActiveEntity();
 
-     SendMessage complete(Update update);
+     SendMessage complete(Update update, JSONObject parentFlowInput);
 }

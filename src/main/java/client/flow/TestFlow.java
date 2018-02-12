@@ -3,6 +3,7 @@ package client.flow;
 import FlowProccessor.model.impl.BotBaseModelEntity;
 import FlowProccessor.model.impl.BotFlow;
 import client.model.TestModel;
+import org.json.JSONObject;
 import org.telegram.telegrambots.api.methods.send.SendMessage;
 import org.telegram.telegrambots.api.objects.Update;
 
@@ -30,7 +31,7 @@ public class TestFlow extends BotFlow {
     }
 
     @Override
-    public SendMessage complete(Update update) {
+    public SendMessage complete(Update update, JSONObject parentFlowInput) {
 
         String message = "Finished flow, User number is : " + model.getNumber();
 

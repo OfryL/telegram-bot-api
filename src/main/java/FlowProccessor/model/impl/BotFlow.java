@@ -2,6 +2,7 @@ package FlowProccessor.model.impl;
 
 import FlowProccessor.model.IBotFlow;
 import FlowProccessor.model.IBotFlowModel;
+import org.json.JSONObject;
 import org.telegram.telegrambots.api.methods.send.SendMessage;
 import org.telegram.telegrambots.api.objects.Update;
 
@@ -65,7 +66,7 @@ public abstract class BotFlow extends BotBaseFlowEntity implements IBotFlow {
     }
 
     @Override
-    public SendMessage complete(Update update) {
+    public SendMessage complete(Update update, JSONObject parentFlowInput) {
         return null;
     }
 }

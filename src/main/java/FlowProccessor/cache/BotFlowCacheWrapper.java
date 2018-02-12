@@ -7,7 +7,9 @@ public class BotFlowCacheWrapper {
 
     private BotFlow flow;
 
-    public BotFlowCacheWrapper(BotFlow flow, JSONObject flowInput) {
+    BotFlowCacheWrapper(){}
+
+    BotFlowCacheWrapper(BotFlow flow, JSONObject flowInput) {
         this.flow = flow;
         this.flowInput = flowInput;
     }
