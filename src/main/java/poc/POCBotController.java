@@ -27,7 +27,7 @@ public class POCBotController extends BotFlowController {
 
     public void onUpdateReceived(Update update) {
 
-        logger.debug(String.format(NEW_UPDATE_LOG, update));
+        logger.info(String.format(NEW_UPDATE_LOG, update));
 
         BotFlowProcessor.getInstance().processUpdate(update);
     }
