@@ -24,13 +24,13 @@ public abstract class BotStep extends BotBaseFlowEntity implements IBotStep {
 
 
     @Override
-    public boolean process(Update update, JSONObject flowInput) {
+    public boolean process(Update update, BotBaseModelEntity model) {
         return true;
     }
 
 
     @Override
-    public SendMessage complete(Update update, JSONObject flowInput) {
+    public SendMessage complete(Update update, BotBaseModelEntity model) {
 
         return null;
     }

@@ -1,6 +1,5 @@
 package FlowProccessor;
 
-import FlowProccessor.cache.BotFlowCacheWrapper;
 import FlowProccessor.cache.CacheManager;
 import FlowProccessor.controller.IBotFlowController;
 import FlowProccessor.factory.BotFlowFactory;
@@ -123,24 +122,24 @@ public class BotFlowProcessor implements IBotFlowProcessor {
 
             BotStep activeStep = (BotStep) activeEntity;
 
-            JSONObject flowCachedInput = cacheManager.getFlowCachedInput(userIdentifier);
+            BotBaseModelEntity model = cacheManager.getActiveFlowModel(userIdentifier);
 
             boolean processCompleted = processStep(
                     activeStep,
-                    flowCachedInput,
+                    model,
                     update
             );
 
             //If current execution succeeded
             if (processCompleted) {
 
-                SendMessage message = activeStep.complete(update, flowCachedInput);
+                SendMessage message = activeStep.complete(update, model);
                 sendIfNotNull(update, message);
 
                 //Search for transitions
                 Set<BotTransition> possibleTransitions = EntityLocator.locateTransitions(flow, activeStep);
 
-                BotTransition nextTransition = getNextTransition(possibleTransitions, flowCachedInput);
+                BotTransition nextTransition = getNextTransition(possibleTransitions, model);
 
                 doNextTransition(userIdentifier, update, flow, nextTransition);
 
@@ -152,7 +151,7 @@ public class BotFlowProcessor implements IBotFlowProcessor {
         }
     }
 
-    private boolean processStep(BotStep step, JSONObject flowInput, Update update) {
+    private boolean processStep(BotStep step, BotBaseModelEntity model, Update update) {
 
         if (!step.isValid(update)) {
 
@@ -162,7 +161,7 @@ public class BotFlowProcessor implements IBotFlowProcessor {
         }
 
         //Processing
-        return step.process(update, flowInput);
+        return step.process(update, model);
     }
 
     private void beginFlowEntity(BotBaseFlowEntity entity, String userIdentifier, Update update) {
@@ -170,7 +169,7 @@ public class BotFlowProcessor implements IBotFlowProcessor {
         if (entity instanceof BotStep) {
 
             SendMessage message = ((BotStep) entity).begin(
-                    cacheManager.getFlowCachedInput(userIdentifier)
+                    cacheManager.getActiveFlowModel(userIdentifier)
             );
 
             sendIfNotNull(update, message);
@@ -187,28 +186,27 @@ public class BotFlowProcessor implements IBotFlowProcessor {
         //First Resolving current flow model
         flow.setDone(true);
 
-        JSONObject flowCachedInput = cacheManager.getFlowCachedInput(userIdentifier);
-        flow.getModel().setFlowInput(flowCachedInput);
-
         //We complete current flow with inject of the Parent flow model ( if exists
-        BotFlowCacheWrapper parentFlowWrapper = cacheManager.getParentFlow(userIdentifier);
-        SendMessage completeMessage = flow.complete(update, parentFlowWrapper.getFlowInput());
+        BotFlow parentFlow = cacheManager.getParentFlow(userIdentifier);
+        BotBaseModelEntity parentFlowModel = parentFlow != null ? parentFlow.getModel() : null;
+
+        SendMessage completeMessage = flow.complete(update, parentFlowModel);
         sendIfNotNull(update, completeMessage);
 
         //Clearing current flow from cache
         cacheManager.clearFlow(userIdentifier, flow);
 
         //Continue to parent flow itself if exists
-        BotFlow parentFlow = parentFlowWrapper.getFlow();
         if (parentFlow != null) {
 
             //Searching for parent flow transition
             Set<BotTransition> possibleTransitions = EntityLocator.locateTransitions(parentFlow, flow);
 
-            BotTransition nextTransition = getNextTransition(possibleTransitions, parentFlowWrapper.getFlowInput());
+            BotTransition nextTransition = getNextTransition(possibleTransitions, parentFlow.getModel());
 
             doNextTransition(userIdentifier, update, parentFlow, nextTransition);
         }
+
     }
 
     private void doNextTransition(String userIdentifier, Update update, BotFlow flow, BotTransition nextTransition) {
@@ -226,7 +224,7 @@ public class BotFlowProcessor implements IBotFlowProcessor {
     }
 
     @SuppressWarnings("unchecked")
-    private BotTransition getNextTransition(Set<BotTransition> transitions, JSONObject flowCachedInput) {
+    private BotTransition getNextTransition(Set<BotTransition> transitions, BotBaseModelEntity model) {
 
         BotTransition nextTransition = null;
 
@@ -234,7 +232,7 @@ public class BotFlowProcessor implements IBotFlowProcessor {
 
             List<BotCondition> conditions = transition.getConditions();
 
-            Predicate<BotCondition> predict = c -> c.checkCondition(flowCachedInput);
+            Predicate<BotCondition> predict = c -> c.checkCondition(model);
 
             if(conditions.stream().allMatch(predict)){
 

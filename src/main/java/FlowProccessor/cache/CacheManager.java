@@ -2,6 +2,7 @@ package FlowProccessor.cache;
 
 import FlowProccessor.factory.BotFlowFactory;
 import FlowProccessor.locator.EntityLocator;
+import FlowProccessor.model.impl.BotBaseModelEntity;
 import FlowProccessor.model.impl.BotCommand;
 import FlowProccessor.model.impl.BotFlow;
 import org.json.JSONObject;
@@ -15,7 +16,7 @@ public class CacheManager {
     private Set<BotCommand> commands;
     private Set<BotFlowFactory> flowFactories;
 
-    private Map<String, List<BotFlowCacheWrapper>> userFlows;
+    private Map<String, List<BotFlow>> userFlows;
 
     public CacheManager(Set<BotFlowFactory> botFlowFactories, Set<BotCommand> commands) {
 
@@ -25,15 +26,15 @@ public class CacheManager {
         this.userFlows = new HashMap<>();
     }
 
-    public Map<String, List<BotFlowCacheWrapper>> getUserFlows() {
+    public Map<String, List<BotFlow>> getUserFlows() {
         return userFlows;
     }
 
     public BotFlow getActiveFlow(String userIdentifier) {
 
-        List<BotFlowCacheWrapper> userCachedFlows =  this.userFlows.get(userIdentifier);
+        List<BotFlow> userCachedFlows =  this.userFlows.get(userIdentifier);
 
-        return userCachedFlows != null ? userCachedFlows.get(userCachedFlows.size()-1).getFlow() : null;
+        return userCachedFlows != null ? userCachedFlows.get(userCachedFlows.size()-1) : null;
     }
 
     public Set<BotCommand> getCommands() {
@@ -55,14 +56,14 @@ public class CacheManager {
 
     public void cacheFlow(String userIdentifier, BotFlow flow) {
 
-        List<BotFlowCacheWrapper> currentFlows = this.userFlows.get(userIdentifier);
+        List<BotFlow> currentFlows = this.userFlows.get(userIdentifier);
 
         if(currentFlows == null) {
 
             currentFlows = new ArrayList<>();
         }
 
-        currentFlows.add(new BotFlowCacheWrapper(flow, new JSONObject()));
+        currentFlows.add(flow);
 
         this.userFlows.put(
                 userIdentifier,
@@ -72,12 +73,12 @@ public class CacheManager {
 
     public void clearFlow(String userIdentifier, BotFlow flow) {
 
-        List<BotFlowCacheWrapper> currentFlows = this.userFlows.get(userIdentifier);
+        List<BotFlow> currentFlows = this.userFlows.get(userIdentifier);
 
         if(currentFlows != null) {
 
             currentFlows = currentFlows.stream()
-                    .filter(flowWrapper -> !flowWrapper.getFlow().getId().equals(flow.getId()))
+                    .filter(flowWrapper -> !flowWrapper.getId().equals(flow.getId()))
                     .collect(Collectors.toList());
 
             if(currentFlows.size() > 0) {
@@ -91,25 +92,23 @@ public class CacheManager {
 
                 this.userFlows.remove(userIdentifier);
             }
-
         }
-
     }
 
-    public BotFlowCacheWrapper getParentFlow(String userIdentifier) {
+    public BotFlow getParentFlow(String userIdentifier) {
 
-        List<BotFlowCacheWrapper> flowWrappers = userFlows.get(userIdentifier);
+        List<BotFlow> flows = userFlows.get(userIdentifier);
 
-        int size = flowWrappers.size();
+        int size = flows.size();
 
-        return size > 1 ? flowWrappers.get(size - 2) : new BotFlowCacheWrapper();
+        return size > 1 ? flows.get(size - 2) : null;
     }
 
-    public JSONObject getFlowCachedInput(String userIdentifier) {
+    public BotBaseModelEntity getActiveFlowModel(String userIdentifier) {
 
-        List<BotFlowCacheWrapper> flowWrappers = userFlows.get(userIdentifier);
+        List<BotFlow> flows = userFlows.get(userIdentifier);
 
-        return flowWrappers.get(flowWrappers.size()-1).getFlowInput();
+        return flows.get(flows.size()-1).getModel();
     }
 
 }

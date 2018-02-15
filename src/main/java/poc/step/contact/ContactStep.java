@@ -1,5 +1,6 @@
 package poc.step.contact;
 
+import FlowProccessor.model.impl.BotBaseModelEntity;
 import FlowProccessor.model.impl.BotStep;
 import org.json.JSONObject;
 import org.telegram.telegrambots.api.methods.send.SendMessage;
@@ -20,7 +21,7 @@ public class ContactStep extends BotStep {
     }
 
     @Override
-    public SendMessage begin(JSONObject flowInput) {
+    public SendMessage begin(BotBaseModelEntity model) {
 
         ReplyKeyboardMarkup replyKeyboardMarkup = new ReplyKeyboardMarkup();
         replyKeyboardMarkup.setSelective(true);
@@ -44,18 +45,15 @@ public class ContactStep extends BotStep {
     }
 
     @Override
-    public boolean process(Update update, JSONObject flowInput) {
+    public boolean process(Update update, BotBaseModelEntity model) {
 
-        flowInput.put(
-                "contact",
-                update.getMessage().getContact()
-        );
+        model.set("contact",update.getMessage().getContact());
 
         return true;
     }
 
     @Override
-    public SendMessage complete(Update update, JSONObject flowInput) {
+    public SendMessage complete(Update update, BotBaseModelEntity model) {
 
         ReplyKeyboardRemove replyKeyboardRemove = new ReplyKeyboardRemove();
 

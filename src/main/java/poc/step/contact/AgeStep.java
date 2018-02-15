@@ -1,5 +1,6 @@
 package poc.step.contact;
 
+import FlowProccessor.model.impl.BotBaseModelEntity;
 import FlowProccessor.model.impl.BotStep;
 import org.json.JSONObject;
 import org.telegram.telegrambots.api.methods.send.SendMessage;
@@ -13,7 +14,7 @@ public class AgeStep extends BotStep {
 
 
     @Override
-    public SendMessage begin(JSONObject flowInput) {
+    public SendMessage begin(BotBaseModelEntity model) {
 
         return sendNewMessage("Please fill your age");
     }
@@ -23,21 +24,20 @@ public class AgeStep extends BotStep {
 
         String input = update.getMessage().getText();
 
-        try{
+        try {
 
             Integer age = Integer.parseInt(input);
 
             return age > 20;
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             return false;
         }
     }
 
     @Override
-    public boolean process(Update update, JSONObject flowInput) {
+    public boolean process(Update update, BotBaseModelEntity model) {
 
-        flowInput.put(
+        model.set(
                 "age",
                 Integer.parseInt(update.getMessage().getText())
         );

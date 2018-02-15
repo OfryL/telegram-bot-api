@@ -1,5 +1,6 @@
 package poc.step.music;
 
+import FlowProccessor.model.impl.BotBaseModelEntity;
 import FlowProccessor.model.impl.BotStep;
 import org.json.JSONObject;
 import org.telegram.telegrambots.api.methods.send.SendMessage;
@@ -15,7 +16,7 @@ public class FavoriteSongStep extends BotStep {
     }
 
     @Override
-    public SendMessage begin(JSONObject flowInput) {
+    public SendMessage begin( BotBaseModelEntity model) {
 
         return sendNewMessage("Please write your favorite song");
     }
@@ -28,9 +29,9 @@ public class FavoriteSongStep extends BotStep {
     }
 
     @Override
-    public boolean process(Update update, JSONObject flowInput) {
+    public boolean process(Update update, BotBaseModelEntity model) {
 
-        flowInput.put(
+        model.set(
                 "favoriteSong",
                 update.getMessage().getText()
         );

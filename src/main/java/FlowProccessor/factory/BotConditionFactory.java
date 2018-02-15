@@ -1,7 +1,10 @@
 package FlowProccessor.factory;
 
+import FlowProccessor.model.impl.BotBaseModelEntity;
 import FlowProccessor.model.impl.BotCondition;
 import org.json.JSONObject;
+
+import java.lang.reflect.InvocationTargetException;
 
 /**
  * The type Bot condition factory.
@@ -32,8 +35,8 @@ public class BotConditionFactory {
 
         return new BotCondition() {
             @Override
-            public boolean checkCondition(JSONObject flowInput) {
-                return flowInput.getString(key).equalsIgnoreCase(expected);
+            public boolean checkCondition(BotBaseModelEntity model) {
+                return String.valueOf(model.get(key)).equalsIgnoreCase(expected);
             }
         };
     }
@@ -41,7 +44,7 @@ public class BotConditionFactory {
     public BotCondition always() {
         return new BotCondition() {
             @Override
-            public boolean checkCondition(JSONObject flowInput) {
+            public boolean checkCondition(BotBaseModelEntity model) {
                 return true;
             }
         };
@@ -51,8 +54,8 @@ public class BotConditionFactory {
 
         return new BotCondition() {
             @Override
-            public boolean checkCondition(JSONObject flowInput) {
-                return !condition.checkCondition(flowInput);
+            public boolean checkCondition(BotBaseModelEntity model) {
+                return !condition.checkCondition(model);
             }
         };
 

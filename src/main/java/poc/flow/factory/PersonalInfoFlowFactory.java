@@ -2,6 +2,7 @@ package poc.flow.factory;
 
 import FlowProccessor.factory.BotConditionFactory;
 import FlowProccessor.factory.BotFlowFactory;
+import FlowProccessor.model.impl.BotBaseModelEntity;
 import FlowProccessor.model.impl.BotCondition;
 import FlowProccessor.model.impl.BotTransition;
 import org.json.JSONObject;
@@ -26,12 +27,10 @@ public class PersonalInfoFlowFactory extends BotFlowFactory {
         PersonalInfoFlow flow = new PersonalInfoFlow(this.getId());
 
         //Conditions
-        BotCondition isMusic = new BotCondition() {
-            @Override
-            public boolean checkCondition(JSONObject flowInput) {
-                return flowInput.getString("infoType").equalsIgnoreCase("music");
-            }
-        };
+        BotCondition isMusic = BotConditionFactory.getInstance().equalsCondition(
+                "music",
+                "infoType"
+        );
 
         BotCondition always = BotConditionFactory.getInstance().always();
 

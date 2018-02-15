@@ -20,5 +20,5 @@ public interface IBotFlow {
 
      BotBaseFlowEntity getActiveEntity();
 
-     SendMessage complete(Update update, JSONObject parentFlowInput);
+     SendMessage complete(Update update, BotBaseModelEntity parentModel);
 }

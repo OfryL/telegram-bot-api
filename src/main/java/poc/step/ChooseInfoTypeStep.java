@@ -1,5 +1,6 @@
 package poc.step;
 
+import FlowProccessor.model.impl.BotBaseModelEntity;
 import FlowProccessor.model.impl.BotStep;
 import org.json.JSONObject;
 import org.telegram.telegrambots.api.methods.send.SendMessage;
@@ -23,7 +24,7 @@ public class ChooseInfoTypeStep extends BotStep {
     private Map<String, String> options = new HashMap<>();
 
     @Override
-    public SendMessage begin(JSONObject flowInput) {
+    public SendMessage begin(BotBaseModelEntity model) {
 
         options.put(
                 "music",
@@ -67,12 +68,9 @@ public class ChooseInfoTypeStep extends BotStep {
     }
 
     @Override
-    public boolean process(Update update, JSONObject flowInput) {
+    public boolean process(Update update, BotBaseModelEntity model) {
 
-        flowInput.put(
-                "infoType",
-                update.getCallbackQuery().getData()
-        );
+        model.set("infoType", update.getCallbackQuery().getData());
 
         return true;
     }
@@ -84,7 +82,7 @@ public class ChooseInfoTypeStep extends BotStep {
     }
 
     @Override
-    public SendMessage complete(Update update, JSONObject flowInput) {
+    public SendMessage complete(Update update,  BotBaseModelEntity model) {
 
         ReplyKeyboardRemove replyKeyboardRemove = new ReplyKeyboardRemove();
 

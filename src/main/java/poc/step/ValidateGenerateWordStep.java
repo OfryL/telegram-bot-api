@@ -1,5 +1,6 @@
 package poc.step;
 
+import FlowProccessor.model.impl.BotBaseModelEntity;
 import FlowProccessor.model.impl.BotStep;
 import org.json.JSONObject;
 import org.telegram.telegrambots.api.methods.send.SendMessage;
@@ -19,7 +20,7 @@ public class ValidateGenerateWordStep extends BotStep {
     private String generated;
 
     @Override
-    public SendMessage begin(JSONObject flowInput) {
+    public SendMessage begin(BotBaseModelEntity model) {
 
         byte[] array = new byte[7]; // length is bounded by 7
         new Random().nextBytes(array);
@@ -36,12 +37,10 @@ public class ValidateGenerateWordStep extends BotStep {
     }
 
     @Override
-    public boolean process(Update update, JSONObject flowInput) {
+    public boolean process(Update update, BotBaseModelEntity model) {
 
-        flowInput.put(
-                "textConfirmed",
-                true
-        );
+        model.set("confirmed", true);
+
 
         return true;
     }

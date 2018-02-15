@@ -66,7 +66,7 @@ public abstract class BotFlow extends BotBaseFlowEntity implements IBotFlow {
     }
 
     @Override
-    public SendMessage complete(Update update, JSONObject parentFlowInput) {
+    public SendMessage complete(Update update, BotBaseModelEntity parentModel) {
         return null;
     }
 }

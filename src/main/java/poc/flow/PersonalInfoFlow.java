@@ -1,5 +1,6 @@
 package poc.flow;
 
+import FlowProccessor.model.impl.BotBaseModelEntity;
 import FlowProccessor.model.impl.BotFlow;
 import org.json.JSONObject;
 import org.telegram.telegrambots.api.methods.send.SendMessage;
@@ -30,7 +31,7 @@ public class PersonalInfoFlow extends BotFlow {
     }
 
     @Override
-    public SendMessage complete(Update update, JSONObject parentFlowInput) {
+    public SendMessage complete(Update update, BotBaseModelEntity parentModel) {
 
         String message;
         if(getModel().getContactModel() != null) {
