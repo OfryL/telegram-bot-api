@@ -74,7 +74,7 @@ public class POCBotController extends BotFlowController {
         Set<BotCommand> commands = new HashSet<>();
 
         commands.add(new StartCommand("personalInfoFlow"));
-        commands.add(new AbortCommand(""));
+        commands.add(new AbortCommand(null));
 
         return commands;
     }
