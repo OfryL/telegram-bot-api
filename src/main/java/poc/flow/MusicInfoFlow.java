@@ -34,7 +34,7 @@ public class MusicInfoFlow extends BotFlow {
     @Override
     public SendMessage complete(Update update, BotBaseModelEntity parentModel) {
 
-        String message = "Thanks for filling up music your favorite information";
+        String message = "Thanks for filling up music your favorite information!";
 
         parentModel.set(
                 "musicModel",
