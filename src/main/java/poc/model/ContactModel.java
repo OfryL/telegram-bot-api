@@ -13,18 +13,6 @@ public class ContactModel extends BotBaseModelEntity implements IBotFlowModel {
     private Integer age;
 
     private Contact contact;
-    
-    public void setFlowInput(JSONObject flowInput) {
-
-        this.setAge(
-                flowInput.getInt("age")
-        );
-
-        this.setContact(
-                (Contact) flowInput.get("contact")
-        );
-
-    }
 
     public Integer getAge() {
         return age;

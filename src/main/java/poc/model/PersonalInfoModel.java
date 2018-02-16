@@ -15,35 +15,6 @@ public class PersonalInfoModel extends BotBaseModelEntity implements IBotFlowMod
     private MusicModel musicModel;
     private boolean confirmed;
 
-    public void setFlowInput(JSONObject flowInput) {
-
-
-        this.setInfoType(
-                flowInput.getString("infoType")
-        );
-
-        this.setConfirmed(
-                flowInput.getBoolean("textConfirmed")
-        );
-
-        Object contactModel =  flowInput.opt("contactModel");
-
-        if(contactModel != null) {
-            this.setContactModel(
-                    (ContactModel)contactModel
-            );
-        }
-
-        Object musicModel =  flowInput.opt("musicModel");
-
-        if(musicModel != null) {
-            this.setMusicModel(
-                    (MusicModel) musicModel
-            );
-        }
-
-    }
-
     public String getInfoType() {
         return infoType;
     }
