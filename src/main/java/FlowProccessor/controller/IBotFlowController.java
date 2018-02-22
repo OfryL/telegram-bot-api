@@ -1,5 +1,6 @@
 package FlowProccessor.controller;
 
+import FlowProccessor.cache.AbstractCacheManager;
 import FlowProccessor.factory.BotFlowFactory;
 import FlowProccessor.model.impl.BotCommand;
 import org.telegram.telegrambots.api.methods.send.SendMessage;
@@ -10,14 +11,12 @@ import java.util.Set;
 
 public interface IBotFlowController {
 
-     Set<BotFlowFactory> getFlowFactories();
+    void sendMessage(Update update, SendMessage message);
 
-     Set<BotCommand> getCommands();
+    Long getUserIdentityNumber(Update update);
 
-     void sendMessage(Update update, SendMessage message);
+    void sendDefaultResponse(Update update);
 
-     Long getUserIdentityNumber(Update update);
-
-     void sendDefaultResponse(Update update);
+    AbstractCacheManager getCacheManager();
 
 }

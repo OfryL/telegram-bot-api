@@ -1,11 +1,10 @@
 package FlowProccessor;
 
-import FlowProccessor.cache.CacheManager;
+import FlowProccessor.cache.AbstractCacheManager;
 import FlowProccessor.controller.IBotFlowController;
 import FlowProccessor.factory.BotFlowFactory;
 import FlowProccessor.locator.EntityLocator;
 import FlowProccessor.model.impl.*;
-import org.json.JSONObject;
 import org.telegram.telegrambots.api.methods.send.SendMessage;
 import org.telegram.telegrambots.api.objects.Update;
 
@@ -19,7 +18,7 @@ import java.util.function.Predicate;
 public class BotFlowProcessor implements IBotFlowProcessor {
 
     private IBotFlowController controller;
-    private CacheManager cacheManager;
+    private AbstractCacheManager cacheManager;
     private static BotFlowProcessor instance;
 
     private BotFlowProcessor() {
@@ -48,10 +47,7 @@ public class BotFlowProcessor implements IBotFlowProcessor {
         this.controller = clientController;
 
         //Initializing cache manager
-        this.cacheManager = new CacheManager(
-                clientController.getFlowFactories(),
-                clientController.getCommands()
-        );
+        this.cacheManager = clientController.getCacheManager();
     }
 
     @Override
@@ -79,6 +75,8 @@ public class BotFlowProcessor implements IBotFlowProcessor {
 
     private void processCommand(BotCommand command, String userIdentifier, Update update) {
 
+        command.doAction(update, this.controller);
+
         SendMessage commandMessage = command.getMessage(update);
 
         sendIfNotNull(update, commandMessage);
@@ -88,10 +86,6 @@ public class BotFlowProcessor implements IBotFlowProcessor {
         if (flowId != null) {
 
             startFlow(flowId, userIdentifier, update);
-        }
-        else {
-
-            controller.sendDefaultResponse(update);
         }
     }
 
@@ -194,7 +188,7 @@ public class BotFlowProcessor implements IBotFlowProcessor {
         sendIfNotNull(update, completeMessage);
 
         //Clearing current flow from cache
-        cacheManager.clearFlow(userIdentifier, flow);
+        cacheManager.clearFlow(userIdentifier);
 
         //Continue to parent flow itself if exists
         if (parentFlow != null) {

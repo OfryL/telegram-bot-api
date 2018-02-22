@@ -1,6 +1,7 @@
 package poc;
 
 import FlowProccessor.BotFlowProcessor;
+import FlowProccessor.cache.AbstractCacheManager;
 import FlowProccessor.controller.BotFlowController;
 import FlowProccessor.factory.BotFlowFactory;
 import FlowProccessor.model.impl.BotCommand;
@@ -10,6 +11,7 @@ import org.telegram.telegrambots.api.methods.send.SendMessage;
 import org.telegram.telegrambots.api.objects.Message;
 import org.telegram.telegrambots.api.objects.Update;
 import org.telegram.telegrambots.exceptions.TelegramApiException;
+import poc.cache.CacheManager;
 import poc.command.AbortCommand;
 import poc.command.StartCommand;
 import poc.config.ProcessorConfig;
@@ -24,6 +26,7 @@ public class POCBotController extends BotFlowController {
     private static final String NEW_UPDATE_LOG = "New update is here %s";
 
     private final Logger logger = LoggerFactory.getLogger(POCBotController.class);
+    private CacheManager cacheManager;
 
     public void onUpdateReceived(Update update) {
 
@@ -49,34 +52,34 @@ public class POCBotController extends BotFlowController {
     }
 
     @Override
-    public Set<BotFlowFactory> getFlowFactories() {
+    public AbstractCacheManager getCacheManager() {
 
-        Set<BotFlowFactory> factories = new HashSet<>();
+        if(this.cacheManager == null) {
 
-        factories.add(
-                new PersonalInfoFlowFactory("personalInfoFlow")
-        );
+            Set<BotFlowFactory> factories = new HashSet<>();
 
-        factories.add(
-                new ContactInfoFlowFactory("contactFlow")
-        );
+            factories.add(
+                    new PersonalInfoFlowFactory("personalInfoFlow")
+            );
 
-        factories.add(
-                new MusicInfoFlowFactory("musicFlow")
-        );
+            factories.add(
+                    new ContactInfoFlowFactory("contactFlow")
+            );
 
-        return factories;
-    }
+            factories.add(
+                    new MusicInfoFlowFactory("musicFlow")
+            );
 
-    @Override
-    public Set<BotCommand> getCommands() {
 
-        Set<BotCommand> commands = new HashSet<>();
+            Set<BotCommand> commands = new HashSet<>();
 
-        commands.add(new StartCommand("personalInfoFlow"));
-        commands.add(new AbortCommand(null));
+            commands.add(new StartCommand("personalInfoFlow"));
+            commands.add(new AbortCommand(null));
 
-        return commands;
+            this.cacheManager = new CacheManager(factories, commands);
+        }
+
+        return cacheManager;
     }
 
     @Override
