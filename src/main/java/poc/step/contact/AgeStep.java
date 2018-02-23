@@ -5,8 +5,9 @@ import FlowProccessor.model.impl.BotStep;
 import org.json.JSONObject;
 import org.telegram.telegrambots.api.methods.send.SendMessage;
 import org.telegram.telegrambots.api.objects.Update;
+import poc.step.BaseStep;
 
-public class AgeStep extends BotStep {
+public class AgeStep extends BaseStep {
 
     public AgeStep(String id) {
         super(id);

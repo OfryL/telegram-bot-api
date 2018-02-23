@@ -4,6 +4,7 @@ import FlowProccessor.model.impl.BotBaseModelEntity;
 import FlowProccessor.model.impl.BotStep;
 import org.json.JSONObject;
 import org.telegram.telegrambots.api.methods.send.SendMessage;
+import org.telegram.telegrambots.api.methods.updatingmessages.DeleteMessage;
 import org.telegram.telegrambots.api.objects.CallbackQuery;
 import org.telegram.telegrambots.api.objects.Update;
 import org.telegram.telegrambots.api.objects.replykeyboard.InlineKeyboardMarkup;
@@ -15,7 +16,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class ChooseInfoTypeStep extends BotStep {
+public class ChooseInfoTypeStep extends BaseStep {
 
     public ChooseInfoTypeStep(String id) {
         super(id);
@@ -82,15 +83,8 @@ public class ChooseInfoTypeStep extends BotStep {
     }
 
     @Override
-    public SendMessage complete(Update update,  BotBaseModelEntity model) {
+    public DeleteMessage complete(Update update, BotBaseModelEntity model) {
 
-        ReplyKeyboardRemove replyKeyboardRemove = new ReplyKeyboardRemove();
-
-        String message = String.format(
-                "Starting the %s Info flow!",
-                update.getCallbackQuery().getData().equalsIgnoreCase("music") ? "Music" : "Contact"
-        );
-
-        return new SendMessage().setChatId(update.getCallbackQuery().getMessage().getChatId()).setText(message).setReplyMarkup(replyKeyboardRemove);
+        return deleteMessage(update.getCallbackQuery().getMessage().getMessageId());
     }
 }

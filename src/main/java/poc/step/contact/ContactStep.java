@@ -10,11 +10,12 @@ import org.telegram.telegrambots.api.objects.replykeyboard.ReplyKeyboardMarkup;
 import org.telegram.telegrambots.api.objects.replykeyboard.ReplyKeyboardRemove;
 import org.telegram.telegrambots.api.objects.replykeyboard.buttons.KeyboardButton;
 import org.telegram.telegrambots.api.objects.replykeyboard.buttons.KeyboardRow;
+import poc.step.BaseStep;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class ContactStep extends BotStep {
+public class ContactStep extends BaseStep {
 
     public ContactStep(String id) {
         super(id);

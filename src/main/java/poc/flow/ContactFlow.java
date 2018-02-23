@@ -41,7 +41,7 @@ public class ContactFlow extends BotFlow {
                 this.getModel()
         );
 
-        return new SendMessage().setText(
+        return sendNewMessage(
                 message
         );
     }

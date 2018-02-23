@@ -11,7 +11,7 @@ import java.util.Random;
 import java.util.UUID;
 import java.util.concurrent.ThreadLocalRandom;
 
-public class ValidateGenerateWordStep extends BotStep {
+public class ValidateGenerateWordStep extends BaseStep {
 
     public ValidateGenerateWordStep(String id) {
         super(id);

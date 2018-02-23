@@ -42,7 +42,7 @@ public class PersonalInfoFlow extends BotFlow {
             message="I see you choose music info, Nice to know that you love " + this.getModel().getMusicModel().getFavoriteType();
         }
 
-        return new SendMessage().setText(
+        return sendNewMessage(
                 message
         );
     }

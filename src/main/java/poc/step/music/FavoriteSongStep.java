@@ -5,11 +5,12 @@ import FlowProccessor.model.impl.BotStep;
 import org.json.JSONObject;
 import org.telegram.telegrambots.api.methods.send.SendMessage;
 import org.telegram.telegrambots.api.objects.Update;
+import poc.step.BaseStep;
 
 import java.nio.charset.Charset;
 import java.util.Random;
 
-public class FavoriteSongStep extends BotStep {
+public class FavoriteSongStep extends BaseStep {
 
     public FavoriteSongStep(String id) {
         super(id);

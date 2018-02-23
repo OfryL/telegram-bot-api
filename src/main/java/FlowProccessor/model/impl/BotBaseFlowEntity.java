@@ -1,5 +1,10 @@
 package FlowProccessor.model.impl;
 
+import org.telegram.telegrambots.api.methods.send.SendMessage;
+import org.telegram.telegrambots.api.methods.updatingmessages.DeleteMessage;
+import org.telegram.telegrambots.api.objects.replykeyboard.InlineKeyboardMarkup;
+import org.telegram.telegrambots.api.objects.replykeyboard.ReplyKeyboardMarkup;
+
 /**
  * The type Bot base flow entity.
  */
@@ -32,5 +37,22 @@ public abstract class BotBaseFlowEntity {
      */
     public void setId(String id) {
         this.id = id;
+    }
+
+    protected SendMessage sendNewMessage(String text) {
+        return new SendMessage().setText(text);
+    }
+
+    protected SendMessage sendNewMessage(String text, ReplyKeyboardMarkup replyKeyboardMarkup) {
+        return new SendMessage().setText(text).setReplyMarkup(replyKeyboardMarkup);
+    }
+
+    protected SendMessage sendNewMessage(String text, InlineKeyboardMarkup inlineKeyboardMarkup) {
+        return new SendMessage().setText(text).setReplyMarkup(inlineKeyboardMarkup);
+    }
+
+    protected DeleteMessage deleteMessage(Integer messageId) {
+
+        return new DeleteMessage().setMessageId(messageId);
     }
 }
