@@ -139,10 +139,6 @@ public class BotFlowProcessor implements IBotFlowProcessor {
                 doNextTransition(userIdentifier, update, flow, nextTransition);
 
             }
-            else {
-
-                execIfNotNull(update, activeStep.invalidMessage());
-            }
         }
         else {
 
@@ -169,6 +165,11 @@ public class BotFlowProcessor implements IBotFlowProcessor {
 
             //Deleting loading message
             execIfNotNull(update, step.deleteMessage(loadingMessage.getMessageId()));
+        }
+
+        //Checking process result
+        if(!processResult){
+            execIfNotNull(update, step.invalidMessage());
         }
 
         //Finally, Returning result
