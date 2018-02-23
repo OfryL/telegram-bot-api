@@ -23,7 +23,7 @@ public class FavoriteSongStep extends BaseStep {
     }
 
     @Override
-    public boolean isValid(Update update) {
+    public boolean isValid(Update update, BotBaseModelEntity model) {
 
         //TODO Songs api ? Async ?
         return true;

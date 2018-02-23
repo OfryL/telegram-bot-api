@@ -12,7 +12,7 @@ public interface IBotStep {
 
     BotApiMethod<? extends Serializable> begin(BotBaseModelEntity model);
 
-    boolean isValid(Update update);
+    boolean isValid(Update update, BotBaseModelEntity model);
 
     BotApiMethod<? extends Serializable> beforeProcess(Update update, BotBaseModelEntity model);
 

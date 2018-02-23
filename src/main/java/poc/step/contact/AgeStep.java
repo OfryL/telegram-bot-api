@@ -21,7 +21,7 @@ public class AgeStep extends BaseStep {
     }
 
     @Override
-    public boolean isValid(Update update) {
+    public boolean isValid(Update update, BotBaseModelEntity model) {
 
         String input = update.getMessage().getText();
 

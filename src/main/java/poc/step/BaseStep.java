@@ -19,7 +19,7 @@ public class BaseStep extends BotStep {
     }
 
     @Override
-    public boolean isValid(Update update) {
+    public boolean isValid(Update update, BotBaseModelEntity model) {
         return false;
     }
 

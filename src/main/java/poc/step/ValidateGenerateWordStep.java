@@ -29,7 +29,7 @@ public class ValidateGenerateWordStep extends BaseStep {
     }
 
     @Override
-    public boolean isValid(Update update) {
+    public boolean isValid(Update update, BotBaseModelEntity model) {
 
         String message = update.getMessage().getText();
 

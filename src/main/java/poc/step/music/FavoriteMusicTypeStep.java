@@ -72,7 +72,7 @@ public class FavoriteMusicTypeStep extends BaseStep {
     }
 
     @Override
-    public boolean isValid(Update update) {
+    public boolean isValid(Update update, BotBaseModelEntity model) {
 
         CallbackQuery query = update.getCallbackQuery();
 

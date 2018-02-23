@@ -148,7 +148,7 @@ public class BotFlowProcessor implements IBotFlowProcessor {
     private boolean processStep(BotStep step, BotBaseModelEntity model, Update update) {
 
         //Validating step
-        if (!step.isValid(update)) {
+        if (!step.isValid(update, model)) {
 
             execIfNotNull(update, step.invalidMessage());
             return false;
