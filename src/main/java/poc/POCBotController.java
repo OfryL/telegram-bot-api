@@ -7,7 +7,9 @@ import FlowProccessor.factory.BotFlowFactory;
 import FlowProccessor.model.impl.BotCommand;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.telegram.telegrambots.api.methods.BotApiMethod;
 import org.telegram.telegrambots.api.methods.send.SendMessage;
+import org.telegram.telegrambots.api.methods.updatingmessages.DeleteMessage;
 import org.telegram.telegrambots.api.objects.Message;
 import org.telegram.telegrambots.api.objects.Update;
 import org.telegram.telegrambots.exceptions.TelegramApiException;
@@ -19,6 +21,7 @@ import poc.flow.factory.ContactInfoFlowFactory;
 import poc.flow.factory.MusicInfoFlowFactory;
 import poc.flow.factory.PersonalInfoFlowFactory;
 
+import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -41,14 +44,6 @@ public class POCBotController extends BotFlowController {
 
     public String getBotToken() {
         return ProcessorConfig.BOT_TOKEN;
-    }
-
-    private void executeSendMessage(SendMessage sendMessage) {
-        try {
-            execute(sendMessage);
-        } catch (TelegramApiException e) {
-            e.printStackTrace();
-        }
     }
 
     @Override
@@ -83,11 +78,24 @@ public class POCBotController extends BotFlowController {
     }
 
     @Override
-    public void sendMessage(Update update, SendMessage message) {
+    public <T extends Serializable, Method extends BotApiMethod<T>> void executeOperation(Update update, Method method) {
 
-        message.setChatId(getUserIdentityNumber(update));
+        Long userIdentifier = getUserIdentityNumber(update);
 
-        executeSendMessage(message);
+        if(method instanceof SendMessage) {
+
+            ((SendMessage) method).setChatId(userIdentifier);
+        }
+        else if (method instanceof DeleteMessage) {
+
+            ((DeleteMessage) method).setChatId(String.valueOf(userIdentifier));
+        }
+
+        try {
+            execute(method);
+        } catch (TelegramApiException e) {
+            e.printStackTrace();
+        }
     }
 
     public Long getUserIdentityNumber(Update update) {
@@ -100,7 +108,7 @@ public class POCBotController extends BotFlowController {
     @Override
     public void sendDefaultResponse(Update update) {
 
-        this.sendMessage(update, new SendMessage().setText("Dunno what to do!"));
+        this.executeOperation(update, new SendMessage().setText("Dunno what to do!"));
 
     }
 }

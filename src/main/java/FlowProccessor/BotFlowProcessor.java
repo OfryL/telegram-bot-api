@@ -5,9 +5,11 @@ import FlowProccessor.controller.IBotFlowController;
 import FlowProccessor.factory.BotFlowFactory;
 import FlowProccessor.locator.EntityLocator;
 import FlowProccessor.model.impl.*;
+import org.telegram.telegrambots.api.methods.BotApiMethod;
 import org.telegram.telegrambots.api.methods.send.SendMessage;
 import org.telegram.telegrambots.api.objects.Update;
 
+import java.io.Serializable;
 import java.util.List;
 import java.util.Set;
 import java.util.function.Predicate;
@@ -77,9 +79,7 @@ public class BotFlowProcessor implements IBotFlowProcessor {
 
         command.doAction(update, this.controller);
 
-        SendMessage commandMessage = command.getMessage(update);
-
-        sendIfNotNull(update, commandMessage);
+        execIfNotNull(update, command.getMessage(update));
 
         String flowId = command.getFlowEntityId();
 
@@ -127,8 +127,8 @@ public class BotFlowProcessor implements IBotFlowProcessor {
             //If current execution succeeded
             if (processCompleted) {
 
-                SendMessage message = activeStep.complete(update, model);
-                sendIfNotNull(update, message);
+                BotApiMethod<? extends Serializable> completeMessage = activeStep.complete(update, model);
+                execIfNotNull(update, completeMessage);
 
                 //Search for transitions
                 Set<BotTransition> possibleTransitions = EntityLocator.locateTransitions(flow, activeStep);
@@ -147,12 +147,16 @@ public class BotFlowProcessor implements IBotFlowProcessor {
 
     private boolean processStep(BotStep step, BotBaseModelEntity model, Update update) {
 
+        //Validating step
         if (!step.isValid(update)) {
 
-            SendMessage invalidMessage = step.invalidMessage();
-            sendIfNotNull(update, invalidMessage);
+            execIfNotNull(update, step.invalidMessage());
             return false;
         }
+
+        //Before process
+        BotApiMethod<? extends Serializable> beforeProcess = step.beforeProcess(update, model);
+        execIfNotNull(update, beforeProcess);
 
         //Processing
         return step.process(update, model);
@@ -162,11 +166,11 @@ public class BotFlowProcessor implements IBotFlowProcessor {
 
         if (entity instanceof BotStep) {
 
-            SendMessage message = ((BotStep) entity).begin(
+            BotApiMethod<? extends Serializable> beginMessage= ((BotStep) entity).begin(
                     cacheManager.getActiveFlowModel(userIdentifier)
             );
 
-            sendIfNotNull(update, message);
+            execIfNotNull(update, beginMessage);
         }
         else {
 
@@ -185,7 +189,7 @@ public class BotFlowProcessor implements IBotFlowProcessor {
         BotBaseModelEntity parentFlowModel = parentFlow != null ? parentFlow.getModel() : null;
 
         SendMessage completeMessage = flow.complete(update, parentFlowModel);
-        sendIfNotNull(update, completeMessage);
+        execIfNotNull(update, completeMessage);
 
         //Clearing current flow from cache
         cacheManager.clearFlow(userIdentifier);
@@ -238,11 +242,11 @@ public class BotFlowProcessor implements IBotFlowProcessor {
         return nextTransition;
     }
 
-    private void sendIfNotNull(Update update, SendMessage message) {
+    private <T extends Serializable, Method extends BotApiMethod<T>> void execIfNotNull(Update update, Method botApiMethod) {
 
-        if (message != null) {
+        if (botApiMethod != null) {
 
-            controller.sendMessage(update, message);
+            controller.executeOperation(update, botApiMethod);
         }
     }
 }
