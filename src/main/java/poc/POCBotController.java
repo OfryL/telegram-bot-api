@@ -78,7 +78,7 @@ public class POCBotController extends BotFlowController {
     }
 
     @Override
-    public <T extends Serializable, Method extends BotApiMethod<T>> void executeOperation(Update update, Method method) {
+    public <T extends Serializable, Method extends BotApiMethod<T>> T executeOperation(Update update, Method method) {
 
         Long userIdentifier = getUserIdentityNumber(update);
 
@@ -92,9 +92,11 @@ public class POCBotController extends BotFlowController {
         }
 
         try {
-            execute(method);
+            return execute(method);
         } catch (TelegramApiException e) {
+
             e.printStackTrace();
+            return null;
         }
     }
 

@@ -3,6 +3,7 @@ package poc.step;
 import FlowProccessor.model.impl.BotBaseModelEntity;
 import FlowProccessor.model.impl.BotStep;
 import org.telegram.telegrambots.api.methods.BotApiMethod;
+import org.telegram.telegrambots.api.methods.send.SendMessage;
 import org.telegram.telegrambots.api.objects.Update;
 
 import java.io.Serializable;
@@ -24,7 +25,7 @@ public class BaseStep extends BotStep {
     }
 
     @Override
-    public BotApiMethod<? extends Serializable> beforeProcess(Update update, BotBaseModelEntity model) {
+    public SendMessage loadingMessage() {
         return null;
     }
 
@@ -39,7 +40,7 @@ public class BaseStep extends BotStep {
     }
 
     @Override
-    public BotApiMethod<? extends Serializable> invalidMessage() {
+    public SendMessage invalidMessage() {
         return null;
     }
 }

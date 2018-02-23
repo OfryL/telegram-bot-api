@@ -7,6 +7,7 @@ import FlowProccessor.locator.EntityLocator;
 import FlowProccessor.model.impl.*;
 import org.telegram.telegrambots.api.methods.BotApiMethod;
 import org.telegram.telegrambots.api.methods.send.SendMessage;
+import org.telegram.telegrambots.api.objects.Message;
 import org.telegram.telegrambots.api.objects.Update;
 
 import java.io.Serializable;
@@ -138,6 +139,10 @@ public class BotFlowProcessor implements IBotFlowProcessor {
                 doNextTransition(userIdentifier, update, flow, nextTransition);
 
             }
+            else {
+
+                execIfNotNull(update, activeStep.invalidMessage());
+            }
         }
         else {
 
@@ -154,19 +159,27 @@ public class BotFlowProcessor implements IBotFlowProcessor {
             return false;
         }
 
-        //Before process
-        BotApiMethod<? extends Serializable> beforeProcess = step.beforeProcess(update, model);
-        execIfNotNull(update, beforeProcess);
+        //Checking if step has loading message
+        Message loadingMessage = execIfNotNull(update, step.loadingMessage());
 
         //Processing
-        return step.process(update, model);
+        boolean processResult = step.process(update, model);
+
+        if(loadingMessage != null) {
+
+            //Deleting loading message
+            execIfNotNull(update, step.deleteMessage(loadingMessage.getMessageId()));
+        }
+
+        //Finally, Returning result
+        return processResult;
     }
 
     private void beginFlowEntity(BotBaseFlowEntity entity, String userIdentifier, Update update) {
 
         if (entity instanceof BotStep) {
 
-            BotApiMethod<? extends Serializable> beginMessage= ((BotStep) entity).begin(
+            BotApiMethod<? extends Serializable> beginMessage = ((BotStep) entity).begin(
                     cacheManager.getActiveFlowModel(userIdentifier)
             );
 
@@ -226,13 +239,13 @@ public class BotFlowProcessor implements IBotFlowProcessor {
 
         BotTransition nextTransition = null;
 
-        for(BotTransition transition : transitions) {
+        for (BotTransition transition : transitions) {
 
             List<BotCondition> conditions = transition.getConditions();
 
             Predicate<BotCondition> predict = c -> c.checkCondition(model);
 
-            if(conditions.stream().allMatch(predict)){
+            if (conditions.stream().allMatch(predict)) {
 
                 nextTransition = transition;
                 break;
@@ -242,11 +255,12 @@ public class BotFlowProcessor implements IBotFlowProcessor {
         return nextTransition;
     }
 
-    private <T extends Serializable, Method extends BotApiMethod<T>> void execIfNotNull(Update update, Method botApiMethod) {
+    private <T extends Serializable, Method extends BotApiMethod<T>> T execIfNotNull(Update update, Method botApiMethod) {
 
-        if (botApiMethod != null) {
+        if (botApiMethod == null) return null;
 
-            controller.executeOperation(update, botApiMethod);
-        }
+        //Else, Executing
+        return controller.executeOperation(update, botApiMethod);
+
     }
 }

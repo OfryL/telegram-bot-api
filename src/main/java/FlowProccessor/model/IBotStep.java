@@ -14,11 +14,11 @@ public interface IBotStep {
 
     boolean isValid(Update update, BotBaseModelEntity model);
 
-    BotApiMethod<? extends Serializable> beforeProcess(Update update, BotBaseModelEntity model);
+    SendMessage loadingMessage();
 
     boolean process(Update update, BotBaseModelEntity model);
 
     BotApiMethod<? extends Serializable> complete(Update update, BotBaseModelEntity model);
 
-    BotApiMethod<? extends Serializable> invalidMessage();
+    SendMessage invalidMessage();
 }

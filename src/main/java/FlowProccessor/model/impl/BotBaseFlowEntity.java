@@ -57,7 +57,7 @@ public abstract class BotBaseFlowEntity {
         return new SendMessage().setText(text).setReplyMarkup(replyKeyboardRemove);
     }
 
-    protected DeleteMessage deleteMessage(Integer messageId) {
+    public DeleteMessage deleteMessage(Integer messageId) {
 
         return new DeleteMessage().setMessageId(messageId);
     }

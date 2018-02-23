@@ -3,6 +3,7 @@ package poc.step;
 import FlowProccessor.model.impl.BotBaseModelEntity;
 import FlowProccessor.model.impl.BotStep;
 import org.json.JSONObject;
+import org.telegram.telegrambots.api.methods.BotApiMethod;
 import org.telegram.telegrambots.api.methods.send.SendMessage;
 import org.telegram.telegrambots.api.methods.updatingmessages.DeleteMessage;
 import org.telegram.telegrambots.api.objects.CallbackQuery;
@@ -11,6 +12,7 @@ import org.telegram.telegrambots.api.objects.replykeyboard.InlineKeyboardMarkup;
 import org.telegram.telegrambots.api.objects.replykeyboard.ReplyKeyboardRemove;
 import org.telegram.telegrambots.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -51,6 +53,11 @@ public class ChooseInfoTypeStep extends BaseStep {
         // Add it to the message
         markupInline.setKeyboard(rowsInline);
         return sendNewMessage("Hey, Please choose what type of info would you like to fill up!", markupInline);
+    }
+
+    @Override
+    public SendMessage loadingMessage() {
+        return sendNewMessage("Loaindng dude");
     }
 
     @Override

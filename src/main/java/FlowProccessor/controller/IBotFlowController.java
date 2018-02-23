@@ -13,7 +13,7 @@ import java.util.Set;
 
 public interface IBotFlowController {
 
-    <T extends Serializable, Method extends BotApiMethod<T>> void executeOperation(Update update, Method method);
+    <T extends Serializable, Method extends BotApiMethod<T>> T executeOperation(Update update, Method method);
 
     Long getUserIdentityNumber(Update update);
 
