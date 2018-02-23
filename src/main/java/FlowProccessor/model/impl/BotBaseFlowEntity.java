@@ -4,6 +4,7 @@ import org.telegram.telegrambots.api.methods.send.SendMessage;
 import org.telegram.telegrambots.api.methods.updatingmessages.DeleteMessage;
 import org.telegram.telegrambots.api.objects.replykeyboard.InlineKeyboardMarkup;
 import org.telegram.telegrambots.api.objects.replykeyboard.ReplyKeyboardMarkup;
+import org.telegram.telegrambots.api.objects.replykeyboard.ReplyKeyboardRemove;
 
 /**
  * The type Bot base flow entity.
@@ -49,6 +50,11 @@ public abstract class BotBaseFlowEntity {
 
     protected SendMessage sendNewMessage(String text, InlineKeyboardMarkup inlineKeyboardMarkup) {
         return new SendMessage().setText(text).setReplyMarkup(inlineKeyboardMarkup);
+    }
+
+    protected SendMessage sendNewMessageAndRemoveKeyboard(String text,ReplyKeyboardRemove replyKeyboardRemove) {
+
+        return new SendMessage().setText(text).setReplyMarkup(replyKeyboardRemove);
     }
 
     protected DeleteMessage deleteMessage(Integer messageId) {
