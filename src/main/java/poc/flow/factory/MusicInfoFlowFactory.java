@@ -4,6 +4,7 @@ import FlowProccessor.factory.BotConditionFactory;
 import FlowProccessor.factory.BotFlowFactory;
 import FlowProccessor.model.impl.BotCondition;
 import FlowProccessor.model.impl.BotTransition;
+import org.telegram.telegrambots.api.objects.Update;
 import poc.flow.MusicInfoFlow;
 import poc.flow.PersonalInfoFlow;
 import poc.step.contact.AgeStep;
@@ -21,7 +22,7 @@ public class MusicInfoFlowFactory extends BotFlowFactory {
     }
 
     @Override
-    public MusicInfoFlow createFlow() {
+    public MusicInfoFlow createFlow(Update update) {
 
         MusicInfoFlow flow = new MusicInfoFlow(this.getId());
 

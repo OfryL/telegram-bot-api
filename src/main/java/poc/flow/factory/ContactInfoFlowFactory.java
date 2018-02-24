@@ -4,6 +4,7 @@ import FlowProccessor.factory.BotConditionFactory;
 import FlowProccessor.factory.BotFlowFactory;
 import FlowProccessor.model.impl.BotCondition;
 import FlowProccessor.model.impl.BotTransition;
+import org.telegram.telegrambots.api.objects.Update;
 import poc.flow.ContactFlow;
 import poc.flow.MusicInfoFlow;
 import poc.step.contact.AgeStep;
@@ -19,7 +20,7 @@ public class ContactInfoFlowFactory extends BotFlowFactory {
     }
 
     @Override
-    public ContactFlow createFlow() {
+    public ContactFlow createFlow(Update update) {
 
         ContactFlow flow = new ContactFlow(this.getId());
 

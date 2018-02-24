@@ -96,7 +96,7 @@ public class BotFlowProcessor implements IBotFlowProcessor {
         BotFlowFactory factory = cacheManager.getFactory(flowId);
 
         //Instantiating flow
-        BotFlow flow = factory.createFlow();
+        BotFlow flow = factory.createFlow(update);
 
         //Caching
         cacheManager.cacheFlow(userIdentifier, flow);
@@ -133,7 +133,7 @@ public class BotFlowProcessor implements IBotFlowProcessor {
 
                 //Search for transitions
                 Set<BotTransition> possibleTransitions = EntityLocator.locateTransitions(flow, activeStep);
-                BotTransition nextTransition = getNextTransition(possibleTransitions, model);
+                BotTransition nextTransition = getNextTransition(update, possibleTransitions, model);
                 doNextTransition(userIdentifier, update, flow, nextTransition);
 
             }
@@ -219,7 +219,7 @@ public class BotFlowProcessor implements IBotFlowProcessor {
 
             //Searching for parent flow transition
             Set<BotTransition> possibleTransitions = EntityLocator.locateTransitions(parentFlow, flow);
-            BotTransition nextTransition = getNextTransition(possibleTransitions, parentFlow.getModel());
+            BotTransition nextTransition = getNextTransition(update, possibleTransitions, parentFlow.getModel());
             doNextTransition(userIdentifier, update, parentFlow, nextTransition);
         }
 
@@ -240,14 +240,14 @@ public class BotFlowProcessor implements IBotFlowProcessor {
     }
 
     @SuppressWarnings("unchecked")
-    private BotTransition getNextTransition(Set<BotTransition> transitions, BotBaseModelEntity model) {
+    private BotTransition getNextTransition(Update update, Set<BotTransition> transitions, BotBaseModelEntity model) {
 
         BotTransition nextTransition = null;
 
         for (BotTransition transition : transitions) {
 
             List<BotCondition> conditions = transition.getConditions();
-            Predicate<BotCondition> predict = c -> c.checkCondition(model);
+            Predicate<BotCondition> predict = c -> c.checkCondition(update, model);
             if (conditions.stream().allMatch(predict)) {
 
                 nextTransition = transition;

@@ -1,17 +1,12 @@
 package FlowProccessor.factory;
 
 import FlowProccessor.model.impl.BotFlow;
+import org.telegram.telegrambots.api.objects.Update;
 
 /**
  * The interface Flow factory.
  */
 public interface IBotFlowFactory {
 
-    /**
-     * Create flow t.
-     *
-     * @param <T> the type parameter
-     * @return the t
-     */
-    BotFlow createFlow();
+    BotFlow createFlow(Update update);
 }

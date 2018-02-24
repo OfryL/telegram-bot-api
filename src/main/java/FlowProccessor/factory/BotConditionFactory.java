@@ -3,6 +3,7 @@ package FlowProccessor.factory;
 import FlowProccessor.model.impl.BotBaseModelEntity;
 import FlowProccessor.model.impl.BotCondition;
 import org.json.JSONObject;
+import org.telegram.telegrambots.api.objects.Update;
 
 import java.lang.reflect.InvocationTargetException;
 
@@ -35,7 +36,7 @@ public class BotConditionFactory {
 
         return new BotCondition() {
             @Override
-            public boolean checkCondition(BotBaseModelEntity model) {
+            public boolean checkCondition(Update update, BotBaseModelEntity model) {
                 return String.valueOf(model.get(key)).equalsIgnoreCase(expected);
             }
         };
@@ -44,7 +45,7 @@ public class BotConditionFactory {
     public BotCondition always() {
         return new BotCondition() {
             @Override
-            public boolean checkCondition(BotBaseModelEntity model) {
+            public boolean checkCondition(Update update,BotBaseModelEntity model) {
                 return true;
             }
         };
@@ -54,8 +55,8 @@ public class BotConditionFactory {
 
         return new BotCondition() {
             @Override
-            public boolean checkCondition(BotBaseModelEntity model) {
-                return !condition.checkCondition(model);
+            public boolean checkCondition(Update update, BotBaseModelEntity model) {
+                return !condition.checkCondition(update, model);
             }
         };
 
