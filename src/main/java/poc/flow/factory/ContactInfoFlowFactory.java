@@ -28,12 +28,8 @@ public class ContactInfoFlowFactory extends BotFlowFactory {
         AgeStep ageStep = new AgeStep("ageStep");
         ContactStep contactStep = new ContactStep("contactStep");
 
-        Set<BotTransition> transitions = new HashSet<>();
         BotTransition toContact = new BotTransition<>(ageStep, contactStep, always);
-
-        transitions.add(toContact);
-
-        flow.setTransitions(transitions);
+        flow.addTransition(toContact);
         flow.setActiveEntity(ageStep);
 
         return flow;

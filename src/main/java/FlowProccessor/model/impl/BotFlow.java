@@ -6,6 +6,7 @@ import org.json.JSONObject;
 import org.telegram.telegrambots.api.methods.send.SendMessage;
 import org.telegram.telegrambots.api.objects.Update;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -28,7 +29,10 @@ public abstract class BotFlow extends BotBaseFlowEntity implements IBotFlow {
      * @param id the id
      */
     public BotFlow(String id) {
+
         super(id);
+        setTransitions(new HashSet<>());
+        setCallbacks(new HashSet<>());
     }
 
     /**
@@ -78,5 +82,13 @@ public abstract class BotFlow extends BotBaseFlowEntity implements IBotFlow {
 
     public void setCallbacks(Set<BotFlowCallback> callbacks) {
         this.callbacks = callbacks;
+    }
+
+    public void addTransition(BotTransition transition) {
+        this.transitions.add(transition);
+    }
+
+    public void addCallback(BotFlowCallback callback) {
+        this.callbacks.add(callback);
     }
 }

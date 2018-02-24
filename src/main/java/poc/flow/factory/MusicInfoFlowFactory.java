@@ -30,12 +30,9 @@ public class MusicInfoFlowFactory extends BotFlowFactory {
         FavoriteSongStep favoriteSongStep = new FavoriteSongStep("favoriteSongStep");
         FavoriteMusicTypeStep favoriteMusicTypeStep = new FavoriteMusicTypeStep("favoriteMusicTypeStep");
 
-        Set<BotTransition> transitions = new HashSet<>();
         BotTransition toFavSong = new BotTransition<>(favoriteMusicTypeStep, favoriteSongStep, always);
 
-        transitions.add(toFavSong);
-
-        flow.setTransitions(transitions);
+        flow.addTransition(toFavSong);
         flow.setActiveEntity(favoriteMusicTypeStep);
 
         return flow;

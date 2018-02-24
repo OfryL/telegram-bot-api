@@ -42,23 +42,18 @@ public class PersonalInfoFlowFactory extends BotFlowFactory {
         ContactFlow contactFlow = new ContactFlow("contactFlow");
         MusicInfoFlow musicInfoFlow = new MusicInfoFlow("musicFlow");
 
-        Set<BotTransition> transitions = new HashSet<>();
         BotTransition toMusic = new BotTransition<>(chooseInfoTypeStep, musicInfoFlow, isMusic);
         BotTransition toContact = new BotTransition<>(chooseInfoTypeStep, contactFlow, BotConditionFactory.getInstance().oppositeOf(isMusic));
         BotTransition fromContact = new BotTransition<>(contactFlow, validateStep, always);
         BotTransition fromMusic = new BotTransition<>(musicInfoFlow, validateStep, always);
 
-        transitions.add(toMusic);
-        transitions.add(toContact);
-        transitions.add(fromContact);
-        transitions.add(fromMusic);
+        flow.addTransition(toMusic);
+        flow.addTransition(toContact);
+        flow.addTransition(fromContact);
+        flow.addTransition(fromMusic);
 
-        Set<BotFlowCallback> callbacks = new HashSet<>();
+        flow.addCallback(new NotifyMusic(musicInfoFlow));
 
-        callbacks.add(new NotifyMusic(musicInfoFlow));
-
-        flow.setTransitions(transitions);
-        flow.setCallbacks(callbacks);
         flow.setActiveEntity(chooseInfoTypeStep);
 
         return flow;
