@@ -17,11 +17,6 @@ public class BotTransition<F extends BotBaseFlowEntity, T extends BotBaseFlowEnt
         this.setConditions(conditions);
     }
 
-    public BotTransition(T to, BotCondition condition) {
-
-        this(null, to, Lists.newArrayList(condition));
-    }
-
     public BotTransition(F from, T to, BotCondition condition) {
 
          this(from, to, Lists.newArrayList(condition));

@@ -112,7 +112,7 @@ public class BotFlowProcessor implements IBotFlowProcessor {
     private void resumeFlow(BotFlow flow, String userIdentifier, Update update) {
 
         //First giving parent to listen for back/cancel transition
-        if (handledBackTransition(userIdentifier, update)) return;
+        if (handledBackTransition(flow, userIdentifier, update)) return;
 
         //If was not processed by parent flow transition, Continue to normal processing
         BotBaseFlowEntity activeEntity = flow.getActiveEntity();
@@ -146,28 +146,6 @@ public class BotFlowProcessor implements IBotFlowProcessor {
 
             startFlow(activeEntity.getId(), userIdentifier, update);
         }
-    }
-
-    private boolean handledBackTransition(String userIdentifier, Update update) {
-
-        BotFlow parentFlow = cacheManager.getParentFlow(userIdentifier);
-
-        if(parentFlow != null && parentFlow.getBackTransition() != null){
-
-            BotTransition backTransition = parentFlow.getBackTransition();
-
-            if(checkTransition(update, backTransition, parentFlow.getModel())) {
-                //Clearing current flow from cache
-                cacheManager.clearFlow(userIdentifier);
-
-                //Begin back destination
-                beginFlowEntity(backTransition.getTo(), userIdentifier, update);
-                return true;
-            }
-
-        }
-
-        return false;
     }
 
     private boolean processStep(BotStep step, BotBaseModelEntity model, Update update) {
@@ -248,6 +226,32 @@ public class BotFlowProcessor implements IBotFlowProcessor {
             doNextTransition(userIdentifier, update, parentFlow, nextTransition);
         }
 
+    }
+
+    private boolean handledBackTransition(BotFlow flow, String userIdentifier, Update update) {
+
+        BotFlow parentFlow = cacheManager.getParentFlow(userIdentifier);
+
+        if(parentFlow != null && parentFlow.getBackTransition() != null){
+
+            BotTransition backTransition = parentFlow.getBackTransition();
+
+            if(checkTransition(update, backTransition, parentFlow.getModel())) {
+
+                //Deleting last message
+                execIfNotNull(update, flow.onBack(update));
+
+                //Clearing current flow from cache
+                cacheManager.clearFlow(userIdentifier);
+
+                //Begin back destination
+                doNextTransition(userIdentifier, update, parentFlow, backTransition);
+                return true;
+            }
+
+        }
+
+        return false;
     }
 
     private void doNextTransition(String userIdentifier, Update update, BotFlow flow, BotTransition nextTransition) {

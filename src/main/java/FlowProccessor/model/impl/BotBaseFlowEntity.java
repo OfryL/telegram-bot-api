@@ -2,6 +2,7 @@ package FlowProccessor.model.impl;
 
 import org.telegram.telegrambots.api.methods.send.SendMessage;
 import org.telegram.telegrambots.api.methods.updatingmessages.DeleteMessage;
+import org.telegram.telegrambots.api.objects.Update;
 import org.telegram.telegrambots.api.objects.replykeyboard.InlineKeyboardMarkup;
 import org.telegram.telegrambots.api.objects.replykeyboard.ReplyKeyboardMarkup;
 import org.telegram.telegrambots.api.objects.replykeyboard.ReplyKeyboardRemove;
@@ -60,5 +61,10 @@ public abstract class BotBaseFlowEntity {
     public DeleteMessage deleteMessage(Integer messageId) {
 
         return new DeleteMessage().setMessageId(messageId);
+    }
+
+    public DeleteMessage deleteFromCallback(Update update) {
+
+        return new DeleteMessage().setMessageId(update.getCallbackQuery().getMessage().getMessageId());
     }
 }
