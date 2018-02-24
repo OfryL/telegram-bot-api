@@ -45,4 +45,12 @@ public final class EntityLocator {
         return matched.collect(Collectors.toSet());
     }
 
+    public static BotFlowCallback locateFlowCallback(BotFlow flow, BotBaseFlowEntity from) {
+
+        Optional<BotFlowCallback> callback = flow.getCallbacks().stream().filter(c -> c.getFrom().getId().equals(from.getId())).findFirst();
+
+        return callback.orElse(null);
+
+    }
+
 }

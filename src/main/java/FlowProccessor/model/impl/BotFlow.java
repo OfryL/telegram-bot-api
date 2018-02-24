@@ -20,6 +20,8 @@ public abstract class BotFlow extends BotBaseFlowEntity implements IBotFlow {
 
     private BotBaseFlowEntity activeEntity;
 
+    private Set<BotFlowCallback> callbacks;
+
     /**
      * Instantiates a new Bot flow.
      *
@@ -68,5 +70,13 @@ public abstract class BotFlow extends BotBaseFlowEntity implements IBotFlow {
     @Override
     public SendMessage complete(Update update, BotBaseModelEntity parentModel) {
         return null;
+    }
+
+    public Set<BotFlowCallback> getCallbacks() {
+        return callbacks;
+    }
+
+    public void setCallbacks(Set<BotFlowCallback> callbacks) {
+        this.callbacks = callbacks;
     }
 }

@@ -1,10 +1,7 @@
 package FlowProccessor.model;
 
 
-import FlowProccessor.model.impl.BotBaseFlowEntity;
-import FlowProccessor.model.impl.BotBaseModelEntity;
-import FlowProccessor.model.impl.BotStep;
-import FlowProccessor.model.impl.BotTransition;
+import FlowProccessor.model.impl.*;
 import org.json.JSONObject;
 import org.telegram.telegrambots.api.methods.send.SendMessage;
 import org.telegram.telegrambots.api.objects.Update;
@@ -19,6 +16,8 @@ public interface IBotFlow {
      Set<BotTransition> getTransitions();
 
      BotBaseFlowEntity getActiveEntity();
+
+     Set<BotFlowCallback> getCallbacks();
 
      SendMessage complete(Update update, BotBaseModelEntity parentModel);
 }

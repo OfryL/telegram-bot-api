@@ -4,8 +4,10 @@ import FlowProccessor.factory.BotConditionFactory;
 import FlowProccessor.factory.BotFlowFactory;
 import FlowProccessor.model.impl.BotBaseModelEntity;
 import FlowProccessor.model.impl.BotCondition;
+import FlowProccessor.model.impl.BotFlowCallback;
 import FlowProccessor.model.impl.BotTransition;
 import org.json.JSONObject;
+import poc.callback.NotifyMusic;
 import poc.flow.ContactFlow;
 import poc.flow.MusicInfoFlow;
 import poc.flow.PersonalInfoFlow;
@@ -51,7 +53,12 @@ public class PersonalInfoFlowFactory extends BotFlowFactory {
         transitions.add(fromContact);
         transitions.add(fromMusic);
 
+        Set<BotFlowCallback> callbacks = new HashSet<>();
+
+        callbacks.add(new NotifyMusic(musicInfoFlow));
+
         flow.setTransitions(transitions);
+        flow.setCallbacks(callbacks);
         flow.setActiveEntity(chooseInfoTypeStep);
 
         return flow;

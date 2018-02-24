@@ -211,6 +211,16 @@ public class BotFlowProcessor implements IBotFlowProcessor {
         //Continue to parent flow itself if exists
         if (parentFlow != null) {
 
+            //Searching for callbacks from current finished flow
+            BotFlowCallback callback = EntityLocator.locateFlowCallback(parentFlow, flow);
+
+            if(callback != null) {
+
+                //Doing callback
+                callback.doCallback(parentFlowModel);
+            }
+
+
             //Searching for parent flow transition
             Set<BotTransition> possibleTransitions = EntityLocator.locateTransitions(parentFlow, flow);
 
