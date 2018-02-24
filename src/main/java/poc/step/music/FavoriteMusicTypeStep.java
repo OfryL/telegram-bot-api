@@ -64,6 +64,9 @@ public class FavoriteMusicTypeStep extends BaseStep {
 
         rowsInline.add(first);
         rowsInline.add(second);
+        List<InlineKeyboardButton> back = new ArrayList<>();
+        back.add(new InlineKeyboardButton().setText("back").setCallbackData("back"));
+        rowsInline.add(back);
 
         // Add it to the message
         markupInline.setKeyboard(rowsInline);

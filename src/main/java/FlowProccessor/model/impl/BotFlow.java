@@ -23,6 +23,8 @@ public abstract class BotFlow extends BotBaseFlowEntity implements IBotFlow {
 
     private Set<BotFlowCallback> callbacks;
 
+    private BotTransition backTransition;
+
     /**
      * Instantiates a new Bot flow.
      *
@@ -90,5 +92,14 @@ public abstract class BotFlow extends BotBaseFlowEntity implements IBotFlow {
 
     public void addCallback(BotFlowCallback callback) {
         this.callbacks.add(callback);
+    }
+
+    @Override
+    public BotTransition getBackTransition() {
+        return backTransition;
+    }
+
+    public void setBackTransition(BotTransition backTransition) {
+        this.backTransition = backTransition;
     }
 }

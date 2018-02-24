@@ -111,6 +111,10 @@ public class BotFlowProcessor implements IBotFlowProcessor {
 
     private void resumeFlow(BotFlow flow, String userIdentifier, Update update) {
 
+        //First giving parent to listen for back/cancel transition
+        if (handledBackTransition(userIdentifier, update)) return;
+
+        //If was not processed by parent flow transition, Continue to normal processing
         BotBaseFlowEntity activeEntity = flow.getActiveEntity();
 
         if (activeEntity instanceof BotStep) {
@@ -142,6 +146,28 @@ public class BotFlowProcessor implements IBotFlowProcessor {
 
             startFlow(activeEntity.getId(), userIdentifier, update);
         }
+    }
+
+    private boolean handledBackTransition(String userIdentifier, Update update) {
+
+        BotFlow parentFlow = cacheManager.getParentFlow(userIdentifier);
+
+        if(parentFlow != null && parentFlow.getBackTransition() != null){
+
+            BotTransition backTransition = parentFlow.getBackTransition();
+
+            if(checkTransition(update, backTransition, parentFlow.getModel())) {
+                //Clearing current flow from cache
+                cacheManager.clearFlow(userIdentifier);
+
+                //Begin back destination
+                beginFlowEntity(backTransition.getTo(), userIdentifier, update);
+                return true;
+            }
+
+        }
+
+        return false;
     }
 
     private boolean processStep(BotStep step, BotBaseModelEntity model, Update update) {
@@ -216,7 +242,6 @@ public class BotFlowProcessor implements IBotFlowProcessor {
                 callback.doCallback(parentFlowModel);
             }
 
-
             //Searching for parent flow transition
             Set<BotTransition> possibleTransitions = EntityLocator.locateTransitions(parentFlow, flow);
             BotTransition nextTransition = getNextTransition(update, possibleTransitions, parentFlow.getModel());
@@ -239,23 +264,27 @@ public class BotFlowProcessor implements IBotFlowProcessor {
         }
     }
 
-    @SuppressWarnings("unchecked")
     private BotTransition getNextTransition(Update update, Set<BotTransition> transitions, BotBaseModelEntity model) {
 
         BotTransition nextTransition = null;
 
         for (BotTransition transition : transitions) {
 
-            List<BotCondition> conditions = transition.getConditions();
-            Predicate<BotCondition> predict = c -> c.checkCondition(update, model);
-            if (conditions.stream().allMatch(predict)) {
-
+            if(checkTransition(update, transition, model)) {
                 nextTransition = transition;
                 break;
             }
         }
 
         return nextTransition;
+    }
+
+    @SuppressWarnings("unchecked")
+    private boolean checkTransition(Update update, BotTransition transition, BotBaseModelEntity model) {
+
+        List<BotCondition> conditions = transition.getConditions();
+        Predicate<BotCondition> predict = c -> c.checkCondition(update, model);
+        return conditions.stream().allMatch(predict);
     }
 
     private <T extends Serializable, Method extends BotApiMethod<T>> T execIfNotNull(Update update, Method botApiMethod) {

@@ -19,5 +19,7 @@ public interface IBotFlow {
 
      Set<BotFlowCallback> getCallbacks();
 
+     BotTransition getBackTransition();
+
      SendMessage complete(Update update, BotBaseModelEntity parentModel);
 }

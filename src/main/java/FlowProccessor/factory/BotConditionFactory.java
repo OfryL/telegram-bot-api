@@ -62,4 +62,13 @@ public class BotConditionFactory {
 
     }
 
+    public BotCondition callbackDataEqualsCondition(String expected) {
+
+        return new BotCondition() {
+            @Override
+            public boolean checkCondition(Update update, BotBaseModelEntity model) {
+                return update.getCallbackQuery().getData().equals(expected);
+            }
+        };
+    }
 }
