@@ -57,11 +57,13 @@ public class BotFlowProcessor implements IBotFlowProcessor {
         BotFlow flow = cacheManager.getActiveFlow(userIdentifier);
         BotCommand command = EntityLocator.locateCommand(cacheManager.getCommands(), update);
 
+        //Command handling is prioritized
         if (command != null) {
             processCommand(command, userIdentifier, update);
             return;
         }
 
+        //Then, Flow handling if exists.
         if (flow != null) {
             resumeFlow(flow, userIdentifier, update);
         }
