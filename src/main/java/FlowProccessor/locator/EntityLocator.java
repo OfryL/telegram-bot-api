@@ -45,6 +45,15 @@ public final class EntityLocator {
         return matched.collect(Collectors.toSet());
     }
 
+    public static Set<BotTransition> locateInterceptorTransition(BotFlow flow, BotBaseFlowEntity entity) {
+
+        Set<BotTransition> transitions = flow.getChildInterceptors();
+
+        Stream<BotTransition> matched = transitions.stream().filter(t -> t.getFrom().getId().equals(entity.getId()));
+
+        return matched.collect(Collectors.toSet());
+    }
+
     public static BotFlowCallback locateFlowCallback(BotFlow flow, BotBaseFlowEntity from) {
 
         Optional<BotFlowCallback> callback = flow.getCallbacks().stream().filter(c -> c.getFrom().getId().equals(from.getId())).findFirst();

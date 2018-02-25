@@ -57,7 +57,7 @@ public class PersonalInfoFlowFactory extends BotFlowFactory {
 
         //Define back
         BotCondition backToChoose = BotConditionFactory.getInstance().callbackDataEqualsCondition("back");
-        flow.setBackTransition(
+        flow.addChildInterceptor(
                 new BotTransition<>(musicInfoFlow, chooseInfoTypeStep, backToChoose)
         );
 

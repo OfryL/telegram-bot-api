@@ -26,7 +26,7 @@ public abstract class BotFlow extends BotBaseFlowEntity implements IBotFlow {
 
     private Set<BotFlowCallback> callbacks;
 
-    private BotTransition backTransition;
+    private Set<BotTransition> childInterceptors;
 
     /**
      * Instantiates a new Bot flow.
@@ -38,6 +38,7 @@ public abstract class BotFlow extends BotBaseFlowEntity implements IBotFlow {
         super(id);
         setTransitions(new HashSet<>());
         setCallbacks(new HashSet<>());
+        setChildInterceptors(new HashSet<>());
     }
 
     /**
@@ -88,6 +89,19 @@ public abstract class BotFlow extends BotBaseFlowEntity implements IBotFlow {
         this.callbacks = callbacks;
     }
 
+    @Override
+    public void onBack(Update update, BotBaseModelEntity model, BotFlowController controller) {
+    }
+
+    @Override
+    public Set<BotTransition> getChildInterceptors() {
+        return childInterceptors;
+    }
+
+    public void setChildInterceptors(Set<BotTransition> childInterceptors) {
+        this.childInterceptors = childInterceptors;
+    }
+
     public void addTransition(BotTransition transition) {
         this.transitions.add(transition);
     }
@@ -96,16 +110,7 @@ public abstract class BotFlow extends BotBaseFlowEntity implements IBotFlow {
         this.callbacks.add(callback);
     }
 
-    @Override
-    public BotTransition getBackTransition() {
-        return backTransition;
-    }
-
-    public void setBackTransition(BotTransition backTransition) {
-        this.backTransition = backTransition;
-    }
-
-    @Override
-    public void onBack(Update update, BotBaseModelEntity model, BotFlowController controller) {
+    public void addChildInterceptor(BotTransition transition) {
+        this.childInterceptors.add(transition);
     }
 }

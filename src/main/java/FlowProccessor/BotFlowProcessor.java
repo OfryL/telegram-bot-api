@@ -107,23 +107,33 @@ public class BotFlowProcessor implements IBotFlowProcessor {
 
     private void resumeFlow(BotFlow flow, String userIdentifier, Update update) {
 
-        //First giving parent to listen for back/cancel transition
-        if (handledBackTransition(flow, userIdentifier, update)) return;
+        //First giving parent (if exists) a chance to intercept message
+        if (handleParentFlowChildInterceptors(flow, userIdentifier, update)) return;
 
-        //If was not processed by parent flow transition, Continue to normal processing
+        //If was not handled by parent flow interceptor, Continue to normal processing
         BotBaseFlowEntity activeEntity = flow.getActiveEntity();
 
         if (activeEntity instanceof BotStep) {
 
             BotStep activeStep = (BotStep) activeEntity;
 
-            BotBaseModelEntity model = cacheManager.getActiveFlowModel(userIdentifier);
+            BotBaseModelEntity model = flow.getModel();
 
-            boolean processCompleted = processStep(
-                    activeStep,
-                    model,
-                    update
-            );
+            boolean processCompleted = false;
+
+            try {
+
+                processCompleted = processStep(
+                        activeStep,
+                        model,
+                        update
+                );
+            }
+            catch (Exception e) {
+
+                activeStep.invalidMessage(update, model, controller);
+            }
+
 
             //If current execution succeeded
             if (processCompleted) {
@@ -132,8 +142,7 @@ public class BotFlowProcessor implements IBotFlowProcessor {
 
                 //Search for transitions
                 Set<BotTransition> possibleTransitions = EntityLocator.locateTransitions(flow, activeStep);
-                BotTransition nextTransition = getNextTransition(update, possibleTransitions, model);
-                doNextTransition(userIdentifier, update, flow, nextTransition);
+                doNextTransition(userIdentifier, update, flow, possibleTransitions);
 
             }
         }
@@ -191,7 +200,7 @@ public class BotFlowProcessor implements IBotFlowProcessor {
 
             //Searching for callbacks from current finished flow
             BotFlowCallback callback = EntityLocator.locateFlowCallback(parentFlow, flow);
-            if(callback != null) {
+            if (callback != null) {
 
                 //Doing callback
                 callback.doCallback(update, parentFlowModel, controller);
@@ -199,36 +208,46 @@ public class BotFlowProcessor implements IBotFlowProcessor {
 
             //Searching for parent flow transition
             Set<BotTransition> possibleTransitions = EntityLocator.locateTransitions(parentFlow, flow);
-            BotTransition nextTransition = getNextTransition(update, possibleTransitions, parentFlow.getModel());
-            doNextTransition(userIdentifier, update, parentFlow, nextTransition);
+            doNextTransition(userIdentifier, update, parentFlow, possibleTransitions);
         }
 
     }
 
-    private boolean handledBackTransition(BotFlow flow, String userIdentifier, Update update) {
+    private boolean handleParentFlowChildInterceptors(BotFlow flow, String userIdentifier, Update update) {
 
         BotFlow parentFlow = cacheManager.getParentFlow(userIdentifier);
+        boolean handledByInterceptor = false;
 
-        if(parentFlow != null && parentFlow.getBackTransition() != null){
+        if (parentFlow != null) {
 
-            BotTransition backTransition = parentFlow.getBackTransition();
+            Set<BotTransition> possibleTransitions = EntityLocator.locateInterceptorTransition(parentFlow, flow);
+            BotBaseModelEntity parentModel = parentFlow.getModel();
 
-            if(checkTransition(update, backTransition, parentFlow.getModel())) {
+            for (BotTransition interceptorTransition : possibleTransitions) {
 
-                //Deleting last message
-                flow.onBack(update, flow.getModel(), controller);
+                if (checkTransition(update, interceptorTransition, parentModel)) {
 
-                //Clearing current flow from cache
-                cacheManager.clearFlow(userIdentifier);
+                    //Deleting last message
+                    flow.onBack(update, flow.getModel(), controller);
 
-                //Begin back destination
-                doNextTransition(userIdentifier, update, parentFlow, backTransition);
-                return true;
+                    //Clearing current flow from cache
+                    cacheManager.clearFlow(userIdentifier);
+
+                    //Begin back destination
+                    doNextTransition(userIdentifier, update, parentFlow, interceptorTransition);
+                    handledByInterceptor = true;
+                }
             }
-
         }
 
-        return false;
+        return handledByInterceptor;
+    }
+
+    private void doNextTransition(String userIdentifier, Update update, BotFlow flow, Set<BotTransition> possibleTransitions) {
+
+        BotTransition nextTransition = getNextTransition(update, possibleTransitions, flow.getModel());
+
+        doNextTransition(userIdentifier, update, flow, nextTransition);
     }
 
     private void doNextTransition(String userIdentifier, Update update, BotFlow flow, BotTransition nextTransition) {
@@ -251,7 +270,7 @@ public class BotFlowProcessor implements IBotFlowProcessor {
 
         for (BotTransition transition : transitions) {
 
-            if(checkTransition(update, transition, model)) {
+            if (checkTransition(update, transition, model)) {
                 nextTransition = transition;
                 break;
             }

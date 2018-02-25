@@ -22,7 +22,7 @@ public interface IBotFlow {
 
     Set<BotFlowCallback> getCallbacks();
 
-    BotTransition getBackTransition();
+    Set<BotTransition> getChildInterceptors();
 
     void onBack(Update update, BotBaseModelEntity model, BotFlowController controller);
 
