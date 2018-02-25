@@ -14,13 +14,16 @@ public class AbortCommand extends BotCommand {
     }
 
     @Override
-    public SendMessage getMessage(Update update) {
+    public void activate(Update update, BotFlowController controller) {
 
-        return new SendMessage().setText("Process aborted, You main start over /start!");
+        controller.executeOperation(
+                update,
+                new SendMessage().setText("Process aborted, You main start over /start!")
+        );
     }
 
     @Override
-    public void doAction(Update update, IBotFlowController controller) {
+    public void doAction(Update update, BotFlowController controller) {
 
         controller.getCacheManager().clearFlow(
                 String.valueOf(

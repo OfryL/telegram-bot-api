@@ -1,5 +1,6 @@
 package FlowProccessor.model.impl;
 
+import FlowProccessor.controller.BotFlowController;
 import FlowProccessor.controller.IBotFlowController;
 import FlowProccessor.model.IBotCommand;
 import org.telegram.telegrambots.api.methods.send.SendMessage;
@@ -8,7 +9,7 @@ import org.telegram.telegrambots.api.objects.Update;
 /**
  * The type Bot command.
  */
-public class BotCommand implements IBotCommand {
+public abstract class BotCommand implements IBotCommand {
 
     private String identifier;
     private String flowEntityId;
@@ -39,12 +40,7 @@ public class BotCommand implements IBotCommand {
     }
 
     @Override
-    public SendMessage getMessage(Update update) {
-        return null;
-    }
-
-    @Override
-    public void doAction(Update update, IBotFlowController controller) {
+    public void doAction(Update update, BotFlowController controller) {
 
     }
 }

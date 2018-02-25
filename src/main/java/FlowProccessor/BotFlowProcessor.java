@@ -2,16 +2,11 @@ package FlowProccessor;
 
 import FlowProccessor.cache.AbstractCacheManager;
 import FlowProccessor.controller.BotFlowController;
-import FlowProccessor.controller.IBotFlowController;
 import FlowProccessor.factory.BotFlowFactory;
 import FlowProccessor.locator.EntityLocator;
 import FlowProccessor.model.impl.*;
-import org.telegram.telegrambots.api.methods.BotApiMethod;
-import org.telegram.telegrambots.api.methods.send.SendMessage;
-import org.telegram.telegrambots.api.objects.Message;
 import org.telegram.telegrambots.api.objects.Update;
 
-import java.io.Serializable;
 import java.util.List;
 import java.util.Set;
 import java.util.function.Predicate;
@@ -79,9 +74,9 @@ public class BotFlowProcessor implements IBotFlowProcessor {
 
     private void processCommand(BotCommand command, String userIdentifier, Update update) {
 
-        command.doAction(update, this.controller);
+        command.doAction(update, controller);
 
-        execIfNotNull(update, command.getMessage(update));
+        command.activate(update, controller);
 
         String flowId = command.getFlowEntityId();
 
@@ -273,12 +268,4 @@ public class BotFlowProcessor implements IBotFlowProcessor {
         return conditions.stream().allMatch(predict);
     }
 
-    private <T extends Serializable, Method extends BotApiMethod<T>> T execIfNotNull(Update update, Method botApiMethod) {
-
-        if (botApiMethod == null) return null;
-
-        //Else, Executing
-        return controller.executeOperation(update, botApiMethod);
-
-    }
 }

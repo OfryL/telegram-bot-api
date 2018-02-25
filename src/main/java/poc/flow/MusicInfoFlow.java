@@ -46,7 +46,6 @@ public class MusicInfoFlow extends BotFlow {
                 this.getModel()
         );
 
-
         controller.executeOperation(
                 update,
                 sendNewMessage(message)
