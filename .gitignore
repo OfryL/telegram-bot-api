@@ -1,6 +1,6 @@
 .idea/
 telegram-bot-api.iml
-
+*.jar
 # Created by https://www.gitignore.io/api/intellij
 
 ### Intellij ###
