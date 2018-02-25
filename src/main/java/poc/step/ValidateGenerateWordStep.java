@@ -1,5 +1,6 @@
 package poc.step;
 
+import FlowProccessor.controller.BotFlowController;
 import FlowProccessor.model.impl.BotBaseModelEntity;
 import FlowProccessor.model.impl.BotStep;
 import org.json.JSONObject;
@@ -20,16 +21,20 @@ public class ValidateGenerateWordStep extends BaseStep {
     private String generated;
 
     @Override
-    public SendMessage begin(BotBaseModelEntity model) {
+    public void begin(Update update, BotBaseModelEntity model, BotFlowController controller) {
 
         byte[] array = new byte[7]; // length is bounded by 7
         new Random().nextBytes(array);
         generated = UUID.randomUUID().toString();
-        return sendNewMessage("Hey, Please write down : " + generated);
+
+        controller.executeOperation(
+                update,
+                sendNewMessage("Hey, Please write down : " + generated)
+        );
     }
 
     @Override
-    public boolean isValid(Update update, BotBaseModelEntity model) {
+    public boolean isValid(Update update, BotBaseModelEntity model, BotFlowController controller) {
 
         String message = update.getMessage().getText();
 
@@ -37,17 +42,19 @@ public class ValidateGenerateWordStep extends BaseStep {
     }
 
     @Override
-    public boolean process(Update update, BotBaseModelEntity model) {
+    public boolean process(Update update, BotBaseModelEntity model, BotFlowController controller) {
 
         model.set("confirmed", true);
-
 
         return true;
     }
 
     @Override
-    public SendMessage invalidMessage() {
+    public void invalidMessage(Update update, BotBaseModelEntity model, BotFlowController controller) {
 
-        return this.sendNewMessage("Text sent does not match requested string!");
+        controller.executeOperation(
+                update,
+                sendNewMessage("Text sent does not match requested string!")
+        );
     }
 }

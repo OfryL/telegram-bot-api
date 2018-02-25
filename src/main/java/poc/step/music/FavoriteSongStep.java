@@ -1,5 +1,6 @@
 package poc.step.music;
 
+import FlowProccessor.controller.BotFlowController;
 import FlowProccessor.model.impl.BotBaseModelEntity;
 import FlowProccessor.model.impl.BotStep;
 import org.json.JSONObject;
@@ -17,20 +18,23 @@ public class FavoriteSongStep extends BaseStep {
     }
 
     @Override
-    public SendMessage begin( BotBaseModelEntity model) {
+    public void begin(Update update, BotBaseModelEntity model, BotFlowController controller) {
 
-        return sendNewMessage("Please write your favorite song");
+        controller.executeOperation(
+                update,
+                sendNewMessage("Please write your favorite song")
+        );
     }
 
     @Override
-    public boolean isValid(Update update, BotBaseModelEntity model) {
+    public boolean isValid(Update update, BotBaseModelEntity model, BotFlowController controller) {
 
         //TODO Songs api ? Async ?
         return true;
     }
 
     @Override
-    public boolean process(Update update, BotBaseModelEntity model) {
+    public boolean process(Update update, BotBaseModelEntity model, BotFlowController controller) {
 
         model.set(
                 "favoriteSong",
@@ -40,8 +44,4 @@ public class FavoriteSongStep extends BaseStep {
         return true;
     }
 
-    @Override
-    public SendMessage invalidMessage() {
-        return null;
-    }
 }

@@ -1,5 +1,6 @@
 package poc.step.music;
 
+import FlowProccessor.controller.BotFlowController;
 import FlowProccessor.model.impl.BotBaseModelEntity;
 import FlowProccessor.model.impl.BotStep;
 import org.json.JSONObject;
@@ -24,7 +25,7 @@ public class FavoriteMusicTypeStep extends BaseStep {
     private Map<String, String> options = new HashMap<>();
 
     @Override
-    public SendMessage begin( BotBaseModelEntity model) {
+    public void begin(Update update, BotBaseModelEntity model, BotFlowController controller) {
 
         options.put(
                 "rock",
@@ -71,11 +72,14 @@ public class FavoriteMusicTypeStep extends BaseStep {
         // Add it to the message
         markupInline.setKeyboard(rowsInline);
 
-        return sendNewMessage("Please select your favorite music type", markupInline);
+        controller.executeOperation(
+                update,
+                sendNewMessage("Please select your favorite music type", markupInline)
+        );
     }
 
     @Override
-    public boolean isValid(Update update, BotBaseModelEntity model) {
+    public boolean isValid(Update update, BotBaseModelEntity model, BotFlowController controller) {
 
         CallbackQuery query = update.getCallbackQuery();
 
@@ -91,7 +95,7 @@ public class FavoriteMusicTypeStep extends BaseStep {
     }
 
     @Override
-    public boolean process(Update update, BotBaseModelEntity model) {
+    public boolean process(Update update, BotBaseModelEntity model, BotFlowController controller) {
 
         model.set("favoriteType",update.getCallbackQuery().getData() );
 
@@ -99,14 +103,20 @@ public class FavoriteMusicTypeStep extends BaseStep {
     }
 
     @Override
-    public SendMessage invalidMessage() {
+    public void invalidMessage(Update update, BotBaseModelEntity model, BotFlowController controller) {
 
-        return this.sendNewMessage("You Must select one of the options");
+        controller.executeOperation(
+                update,
+                sendNewMessage("You Must select one of the options")
+        );
     }
 
     @Override
-    public DeleteMessage complete(Update update, BotBaseModelEntity model) {
+    public void complete(Update update, BotBaseModelEntity model, BotFlowController controller) {
 
-        return deleteMessage(update.getCallbackQuery().getMessage().getMessageId());
+        controller.executeOperation(
+                update,
+                deleteMessage(update.getCallbackQuery().getMessage().getMessageId())
+        );
     }
 }

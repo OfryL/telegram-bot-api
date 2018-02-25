@@ -1,6 +1,7 @@
 package FlowProccessor;
 
 import FlowProccessor.cache.AbstractCacheManager;
+import FlowProccessor.controller.BotFlowController;
 import FlowProccessor.controller.IBotFlowController;
 import FlowProccessor.factory.BotFlowFactory;
 import FlowProccessor.locator.EntityLocator;
@@ -20,7 +21,7 @@ import java.util.function.Predicate;
  */
 public class BotFlowProcessor implements IBotFlowProcessor {
 
-    private IBotFlowController controller;
+    private BotFlowController controller;
     private AbstractCacheManager cacheManager;
     private static BotFlowProcessor instance;
 
@@ -44,7 +45,7 @@ public class BotFlowProcessor implements IBotFlowProcessor {
     }
 
     @Override
-    public void init(IBotFlowController clientController) {
+    public void init(BotFlowController clientController) {
 
         //Setting controller
         this.controller = clientController;
@@ -132,8 +133,7 @@ public class BotFlowProcessor implements IBotFlowProcessor {
             //If current execution succeeded
             if (processCompleted) {
 
-                BotApiMethod<? extends Serializable> completeMessage = activeStep.complete(update, model);
-                execIfNotNull(update, completeMessage);
+                activeStep.complete(update, model, controller);
 
                 //Search for transitions
                 Set<BotTransition> possibleTransitions = EntityLocator.locateTransitions(flow, activeStep);
@@ -151,41 +151,24 @@ public class BotFlowProcessor implements IBotFlowProcessor {
     private boolean processStep(BotStep step, BotBaseModelEntity model, Update update) {
 
         //Validating step
-        if (!step.isValid(update, model)) {
+        if (!step.isValid(update, model, controller)) {
 
-            execIfNotNull(update, step.invalidMessage());
+            step.invalidMessage(update, model, controller);
             return false;
         }
 
-        //Checking if step has loading message
-        Message loadingMessage = execIfNotNull(update, step.loadingMessage());
-
         //Processing
-        boolean processResult = step.process(update, model);
-
-        if(loadingMessage != null) {
-
-            //Deleting loading message
-            execIfNotNull(update, step.deleteMessage(loadingMessage.getMessageId()));
-        }
-
-        //Checking process result
-        if(!processResult){
-            execIfNotNull(update, step.invalidMessage());
-        }
-
-        //Finally, Returning result
-        return processResult;
+        return step.process(update, model, controller);
     }
 
     private void beginFlowEntity(BotBaseFlowEntity entity, String userIdentifier, Update update) {
 
         if (entity instanceof BotStep) {
 
-            BotApiMethod<? extends Serializable> beginMessage = ((BotStep) entity).begin(
-                    cacheManager.getActiveFlowModel(userIdentifier)
-            );
-            execIfNotNull(update, beginMessage);
+            BotStep botStep = (BotStep) entity;
+
+            BotBaseModelEntity model = cacheManager.getActiveFlowModel(userIdentifier);
+            botStep.begin(update, model, controller);
         }
         else {
 
@@ -203,8 +186,7 @@ public class BotFlowProcessor implements IBotFlowProcessor {
         BotFlow parentFlow = cacheManager.getParentFlow(userIdentifier);
         BotBaseModelEntity parentFlowModel = parentFlow != null ? parentFlow.getModel() : null;
 
-        SendMessage completeMessage = flow.complete(update, parentFlowModel);
-        execIfNotNull(update, completeMessage);
+        flow.complete(update, parentFlowModel, controller);
 
         //Clearing current flow from cache
         cacheManager.clearFlow(userIdentifier);
@@ -217,7 +199,7 @@ public class BotFlowProcessor implements IBotFlowProcessor {
             if(callback != null) {
 
                 //Doing callback
-                callback.doCallback(parentFlowModel);
+                callback.doCallback(update, parentFlowModel, controller);
             }
 
             //Searching for parent flow transition
@@ -239,7 +221,7 @@ public class BotFlowProcessor implements IBotFlowProcessor {
             if(checkTransition(update, backTransition, parentFlow.getModel())) {
 
                 //Deleting last message
-                execIfNotNull(update, flow.onBack(update));
+                flow.onBack(update, flow.getModel(), controller);
 
                 //Clearing current flow from cache
                 cacheManager.clearFlow(userIdentifier);

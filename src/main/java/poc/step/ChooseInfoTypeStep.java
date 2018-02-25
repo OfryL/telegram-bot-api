@@ -1,5 +1,6 @@
 package poc.step;
 
+import FlowProccessor.controller.BotFlowController;
 import FlowProccessor.model.impl.BotBaseModelEntity;
 import FlowProccessor.model.impl.BotStep;
 import org.json.JSONObject;
@@ -27,7 +28,7 @@ public class ChooseInfoTypeStep extends BaseStep {
     private Map<String, String> options = new HashMap<>();
 
     @Override
-    public SendMessage begin(BotBaseModelEntity model) {
+    public void begin(Update update, BotBaseModelEntity model, BotFlowController controller) {
 
         options.put(
                 "music",
@@ -52,16 +53,16 @@ public class ChooseInfoTypeStep extends BaseStep {
         rowsInline.add(rowInline);
         // Add it to the message
         markupInline.setKeyboard(rowsInline);
-        return sendNewMessage("Hey, Please choose what type of info would you like to fill up!", markupInline);
+
+
+        controller.executeOperation(
+                update,
+                sendNewMessage("Hey, Please choose what type of info would you like to fill up!", markupInline)
+        );
     }
 
     @Override
-    public SendMessage loadingMessage() {
-        return sendNewMessage("Loaindng dude");
-    }
-
-    @Override
-    public boolean isValid(Update update, BotBaseModelEntity model) {
+    public boolean isValid(Update update, BotBaseModelEntity model, BotFlowController controller) {
 
         CallbackQuery query = update.getCallbackQuery();
 
@@ -76,7 +77,7 @@ public class ChooseInfoTypeStep extends BaseStep {
     }
 
     @Override
-    public boolean process(Update update, BotBaseModelEntity model) {
+    public boolean process(Update update, BotBaseModelEntity model, BotFlowController controller) {
 
         model.set("infoType", update.getCallbackQuery().getData());
 
@@ -84,14 +85,20 @@ public class ChooseInfoTypeStep extends BaseStep {
     }
 
     @Override
-    public SendMessage invalidMessage() {
+    public void invalidMessage(Update update, BotBaseModelEntity model, BotFlowController controller) {
 
-        return this.sendNewMessage("You must pick one of the options!");
+        controller.executeOperation(
+                update,
+                sendNewMessage("You must pick one of the options!")
+        );
     }
 
     @Override
-    public DeleteMessage complete(Update update, BotBaseModelEntity model) {
+    public void complete(Update update, BotBaseModelEntity model, BotFlowController controller) {
 
-        return deleteMessage(update.getCallbackQuery().getMessage().getMessageId());
+        controller.executeOperation(
+                update,
+                deleteMessage(update.getCallbackQuery().getMessage().getMessageId())
+        );
     }
 }

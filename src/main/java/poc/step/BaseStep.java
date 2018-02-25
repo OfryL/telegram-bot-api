@@ -1,5 +1,6 @@
 package poc.step;
 
+import FlowProccessor.controller.BotFlowController;
 import FlowProccessor.model.impl.BotBaseModelEntity;
 import FlowProccessor.model.impl.BotStep;
 import org.telegram.telegrambots.api.methods.BotApiMethod;
@@ -15,32 +16,25 @@ public class BaseStep extends BotStep {
     }
 
     @Override
-    public BotApiMethod<? extends Serializable> begin(BotBaseModelEntity model) {
-        return null;
+    public void begin(Update update, BotBaseModelEntity model, BotFlowController controller) {
     }
 
     @Override
-    public boolean isValid(Update update, BotBaseModelEntity model) {
+    public boolean isValid(Update update, BotBaseModelEntity model, BotFlowController controller) {
         return false;
     }
 
     @Override
-    public SendMessage loadingMessage() {
-        return null;
-    }
-
-    @Override
-    public boolean process(Update update, BotBaseModelEntity model) {
+    public boolean process(Update update, BotBaseModelEntity model, BotFlowController controller) {
         return false;
     }
 
     @Override
-    public BotApiMethod<? extends Serializable> complete(Update update, BotBaseModelEntity model) {
-        return null;
+    public void complete(Update update, BotBaseModelEntity model, BotFlowController controller) {
+
     }
 
     @Override
-    public SendMessage invalidMessage() {
-        return null;
+    public void invalidMessage(Update update, BotBaseModelEntity model, BotFlowController controller) {
     }
 }

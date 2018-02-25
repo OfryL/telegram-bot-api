@@ -1,5 +1,6 @@
 package poc.step.contact;
 
+import FlowProccessor.controller.BotFlowController;
 import FlowProccessor.model.impl.BotBaseModelEntity;
 import FlowProccessor.model.impl.BotStep;
 import org.json.JSONObject;
@@ -22,7 +23,7 @@ public class ContactStep extends BaseStep {
     }
 
     @Override
-    public SendMessage begin(BotBaseModelEntity model) {
+    public void begin(Update update, BotBaseModelEntity model, BotFlowController controller) {
 
         ReplyKeyboardMarkup replyKeyboardMarkup = new ReplyKeyboardMarkup();
         replyKeyboardMarkup.setSelective(true);
@@ -34,11 +35,15 @@ public class ContactStep extends BaseStep {
         row.add(keyboardButton);
         keyboard.add(row);
         replyKeyboardMarkup.setKeyboard(keyboard);
-        return sendNewMessage("Please share yourself as contact",replyKeyboardMarkup);
+
+        controller.executeOperation(
+                update,
+                sendNewMessage("Please share yourself as contact",replyKeyboardMarkup)
+        );
     }
 
     @Override
-    public boolean isValid(Update update, BotBaseModelEntity model) {
+    public boolean isValid(Update update, BotBaseModelEntity model, BotFlowController controller) {
 
         Contact contact = update.getMessage().getContact();
 
@@ -46,7 +51,7 @@ public class ContactStep extends BaseStep {
     }
 
     @Override
-    public boolean process(Update update, BotBaseModelEntity model) {
+    public boolean process(Update update, BotBaseModelEntity model, BotFlowController controller) {
 
         model.set("contact",update.getMessage().getContact());
 
@@ -54,16 +59,22 @@ public class ContactStep extends BaseStep {
     }
 
     @Override
-    public SendMessage complete(Update update, BotBaseModelEntity model) {
+    public void complete(Update update, BotBaseModelEntity model, BotFlowController controller) {
 
         ReplyKeyboardRemove replyKeyboardRemove = new ReplyKeyboardRemove();
 
-        return new SendMessage().setChatId(update.getMessage().getChatId()).setText("Thanks for sending contact").setReplyMarkup(replyKeyboardRemove);
+        controller.executeOperation(
+                update,
+                new SendMessage().setChatId(update.getMessage().getChatId()).setText("Thanks for sending contact").setReplyMarkup(replyKeyboardRemove)
+        );
     }
 
     @Override
-    public SendMessage invalidMessage() {
+    public void invalidMessage(Update update, BotBaseModelEntity model, BotFlowController controller) {
 
-        return this.sendNewMessage("You Must share yourself as contact");
+        controller.executeOperation(
+                update,
+                sendNewMessage("You Must share yourself as contact")
+        );
     }
 }

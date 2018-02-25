@@ -1,5 +1,6 @@
 package poc.flow;
 
+import FlowProccessor.controller.BotFlowController;
 import FlowProccessor.model.impl.BotBaseModelEntity;
 import FlowProccessor.model.impl.BotFlow;
 import org.json.JSONObject;
@@ -36,7 +37,7 @@ public class MusicInfoFlow extends BotFlow {
     }
 
     @Override
-    public SendMessage complete(Update update, BotBaseModelEntity parentModel) {
+    public void complete(Update update, BotBaseModelEntity parentModel, BotFlowController controller) {
 
         String message = "Thanks for filling up music your favorite information!";
 
@@ -45,13 +46,19 @@ public class MusicInfoFlow extends BotFlow {
                 this.getModel()
         );
 
-        return sendNewMessage(
-                message
+
+        controller.executeOperation(
+                update,
+                sendNewMessage(message)
         );
     }
 
     @Override
-    public DeleteMessage onBack(Update update) {
-        return deleteFromCallback(update);
+    public void onBack(Update update, BotBaseModelEntity model, BotFlowController controller) {
+
+        controller.executeOperation(
+                update,
+                deleteFromCallback(update)
+        );
     }
 }

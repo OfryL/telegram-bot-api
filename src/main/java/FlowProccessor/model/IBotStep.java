@@ -1,5 +1,6 @@
 package FlowProccessor.model;
 
+import FlowProccessor.controller.BotFlowController;
 import FlowProccessor.model.impl.BotBaseModelEntity;
 import org.json.JSONObject;
 import org.telegram.telegrambots.api.methods.BotApiMethod;
@@ -10,15 +11,13 @@ import java.io.Serializable;
 
 public interface IBotStep {
 
-    BotApiMethod<? extends Serializable> begin(BotBaseModelEntity model);
+    void begin(Update update, BotBaseModelEntity model, BotFlowController controller);
 
-    boolean isValid(Update update, BotBaseModelEntity model);
+    boolean isValid(Update update, BotBaseModelEntity model, BotFlowController controller);
 
-    SendMessage loadingMessage();
+    boolean process(Update update, BotBaseModelEntity model, BotFlowController controller);
 
-    boolean process(Update update, BotBaseModelEntity model);
+    void complete(Update update, BotBaseModelEntity model, BotFlowController controller);
 
-    BotApiMethod<? extends Serializable> complete(Update update, BotBaseModelEntity model);
-
-    SendMessage invalidMessage();
+    void invalidMessage(Update update, BotBaseModelEntity model, BotFlowController controller);
 }

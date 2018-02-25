@@ -1,6 +1,7 @@
 package FlowProccessor.model;
 
 
+import FlowProccessor.controller.BotFlowController;
 import FlowProccessor.model.impl.*;
 import org.json.JSONObject;
 import org.telegram.telegrambots.api.methods.BotApiMethod;
@@ -23,7 +24,7 @@ public interface IBotFlow {
 
     BotTransition getBackTransition();
 
-    BotApiMethod<? extends Serializable> onBack(Update update);
+    void onBack(Update update, BotBaseModelEntity model, BotFlowController controller);
 
-    SendMessage complete(Update update, BotBaseModelEntity parentModel);
+    void complete(Update update, BotBaseModelEntity model, BotFlowController controller);
 }

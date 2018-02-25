@@ -1,5 +1,6 @@
 package poc.flow;
 
+import FlowProccessor.controller.BotFlowController;
 import FlowProccessor.model.impl.BotBaseModelEntity;
 import FlowProccessor.model.impl.BotFlow;
 import org.json.JSONObject;
@@ -31,19 +32,20 @@ public class PersonalInfoFlow extends BotFlow {
     }
 
     @Override
-    public SendMessage complete(Update update, BotBaseModelEntity parentModel) {
+    public void complete(Update update, BotBaseModelEntity parentModel, BotFlowController controller) {
 
         String message;
-        if(getModel().getContactModel() != null) {
+        if (getModel().getContactModel() != null) {
 
             message = "I see you shared contact info, Thanks :" + this.getModel().getContactModel().getContact().getFirstName();
         }
         else {
-            message="I see you choose music info, Nice to know that you love " + this.getModel().getMusicModel().getFavoriteType();
+            message = "I see you choose music info, Nice to know that you love " + this.getModel().getMusicModel().getFavoriteType();
         }
 
-        return sendNewMessage(
-                message
+        controller.executeOperation(
+                update,
+                sendNewMessage(message)
         );
     }
 

@@ -1,5 +1,6 @@
 package FlowProccessor.model.impl;
 
+import FlowProccessor.controller.BotFlowController;
 import FlowProccessor.model.IBotFlow;
 import FlowProccessor.model.IBotFlowModel;
 import org.json.JSONObject;
@@ -76,8 +77,7 @@ public abstract class BotFlow extends BotBaseFlowEntity implements IBotFlow {
     }
 
     @Override
-    public SendMessage complete(Update update, BotBaseModelEntity parentModel) {
-        return null;
+    public void complete(Update update, BotBaseModelEntity model, BotFlowController controller) {
     }
 
     public Set<BotFlowCallback> getCallbacks() {
@@ -106,7 +106,6 @@ public abstract class BotFlow extends BotBaseFlowEntity implements IBotFlow {
     }
 
     @Override
-    public BotApiMethod<? extends Serializable> onBack(Update update) {
-        return null;
+    public void onBack(Update update, BotBaseModelEntity model, BotFlowController controller) {
     }
 }

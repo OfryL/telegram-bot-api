@@ -1,5 +1,6 @@
 package poc.step.contact;
 
+import FlowProccessor.controller.BotFlowController;
 import FlowProccessor.model.impl.BotBaseModelEntity;
 import FlowProccessor.model.impl.BotStep;
 import org.json.JSONObject;
@@ -15,13 +16,16 @@ public class AgeStep extends BaseStep {
 
 
     @Override
-    public SendMessage begin(BotBaseModelEntity model) {
+    public void begin(Update update, BotBaseModelEntity model, BotFlowController controller) {
 
-        return sendNewMessage("Please fill your age");
+        controller.executeOperation(
+                update,
+                sendNewMessage("Please fill your age")
+        );
     }
 
     @Override
-    public boolean isValid(Update update, BotBaseModelEntity model) {
+    public boolean isValid(Update update, BotBaseModelEntity model, BotFlowController controller) {
 
         String input = update.getMessage().getText();
 
@@ -36,7 +40,7 @@ public class AgeStep extends BaseStep {
     }
 
     @Override
-    public boolean process(Update update, BotBaseModelEntity model) {
+    public boolean process(Update update, BotBaseModelEntity model, BotFlowController controller) {
 
         model.set(
                 "age",
@@ -47,8 +51,11 @@ public class AgeStep extends BaseStep {
     }
 
     @Override
-    public SendMessage invalidMessage() {
+    public void invalidMessage(Update update, BotBaseModelEntity model, BotFlowController controller) {
 
-        return this.sendNewMessage("Must be over 20 years old");
+        controller.executeOperation(
+                update,
+                sendNewMessage("Must be over 20 years old")
+        );
     }
 }
