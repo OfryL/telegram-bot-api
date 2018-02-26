@@ -53,7 +53,7 @@ public class MusicInfoFlow extends BotFlow {
     }
 
     @Override
-    public void onBack(Update update, BotBaseModelEntity model, BotFlowController controller) {
+    public void onExist(Update update, BotBaseModelEntity model, BotFlowController controller) {
 
         controller.executeOperation(
                 update,

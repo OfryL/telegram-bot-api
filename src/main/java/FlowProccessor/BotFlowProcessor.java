@@ -230,7 +230,7 @@ public class BotFlowProcessor implements IBotFlowProcessor {
                 if (checkTransition(update, interceptorTransition, parentModel)) {
 
                     //Deleting last message
-                    flow.onBack(update, flow.getModel(), controller);
+                    flow.onExist(update, flow.getModel(), controller);
 
                     //Clearing current flow from cache
                     cacheManager.clearFlow(userIdentifier);

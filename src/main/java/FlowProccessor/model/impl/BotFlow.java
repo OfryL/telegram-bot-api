@@ -90,7 +90,7 @@ public abstract class BotFlow extends BotBaseFlowEntity implements IBotFlow {
     }
 
     @Override
-    public void onBack(Update update, BotBaseModelEntity model, BotFlowController controller) {
+    public void onExist(Update update, BotBaseModelEntity model, BotFlowController controller) {
     }
 
     @Override

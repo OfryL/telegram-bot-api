@@ -24,7 +24,7 @@ public interface IBotFlow {
 
     Set<BotTransition> getChildInterceptors();
 
-    void onBack(Update update, BotBaseModelEntity model, BotFlowController controller);
+    void onExist(Update update, BotBaseModelEntity model, BotFlowController controller);
 
     void complete(Update update, BotBaseModelEntity model, BotFlowController controller);
 }
