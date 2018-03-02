@@ -1,5 +1,7 @@
 package FlowProccessor.factory;
 
+import FlowProccessor.controller.BotFlowController;
+import FlowProccessor.model.impl.BotBaseModelEntity;
 import FlowProccessor.model.impl.BotFlow;
 import org.telegram.telegrambots.api.objects.Update;
 
@@ -8,5 +10,5 @@ import org.telegram.telegrambots.api.objects.Update;
  */
 public interface IBotFlowFactory {
 
-    BotFlow createFlow(Update update);
+    BotFlow createFlow(Update update, BotBaseModelEntity model, BotFlowController controller);
 }

@@ -96,7 +96,7 @@ public abstract class AbstractCacheManager implements ICacheManager{
 
         List<BotFlow> flows = userFlows.get(userIdentifier);
 
-        return flows.get(flows.size()-1).getModel();
+        return flows != null ? flows.get(flows.size()-1).getModel() : null;
     }
 
 

@@ -49,7 +49,7 @@ public class POCBotController extends BotFlowController {
     @Override
     public AbstractCacheManager getCacheManager() {
 
-        if(this.cacheManager == null) {
+        if (this.cacheManager == null) {
 
             Set<BotFlowFactory> factories = new HashSet<>();
 
@@ -80,9 +80,9 @@ public class POCBotController extends BotFlowController {
     @Override
     public <T extends Serializable, Method extends BotApiMethod<T>> T executeOperation(Update update, Method method) {
 
-        Long userIdentifier = getUserIdentityNumber(update);
+        Long userIdentifier = getChatId(update);
 
-        if(method instanceof SendMessage) {
+        if (method instanceof SendMessage) {
 
             ((SendMessage) method).setChatId(userIdentifier);
         }
@@ -100,7 +100,13 @@ public class POCBotController extends BotFlowController {
         }
     }
 
-    public Long getUserIdentityNumber(Update update) {
+    @Override
+    public Long getUserCacheIdentifier(Update update) {
+
+        return getChatId(update);
+    }
+
+    private Long getChatId(Update update) {
 
         Message message = update.getMessage() != null ? update.getMessage() : update.getCallbackQuery().getMessage();
 
@@ -108,9 +114,27 @@ public class POCBotController extends BotFlowController {
     }
 
     @Override
+    public Integer getUserId(Update update) {
+
+        Message message = update.getMessage() != null ? update.getMessage() : update.getCallbackQuery().getMessage();
+
+        return message.getFrom().getId();
+    }
+
+    @Override
     public void sendDefaultResponse(Update update) {
 
         this.executeOperation(update, new SendMessage().setText("Dunno what to do!"));
+
+    }
+
+    @Override
+    public void sendVideo(Update update, String videoUrl, String caption) {
+
+    }
+
+    @Override
+    public void sendPhoto(Update update, String photo, String caption) {
 
     }
 }

@@ -52,7 +52,7 @@ public class BotFlowProcessor implements IBotFlowProcessor {
     @Override
     public void processUpdate(Update update) {
 
-        String userIdentifier = String.valueOf(controller.getUserIdentityNumber(update));
+        String userIdentifier = String.valueOf(controller.getUserCacheIdentifier(update));
 
         BotFlow flow = cacheManager.getActiveFlow(userIdentifier);
         BotCommand command = EntityLocator.locateCommand(cacheManager.getCommands(), update);
@@ -90,11 +90,14 @@ public class BotFlowProcessor implements IBotFlowProcessor {
 
     private void startFlow(String flowId, String userIdentifier, Update update) {
 
+        //Getting parent flow if exists
+        BotBaseModelEntity parentModel = cacheManager.getActiveFlowModel(userIdentifier);
+
         //Creating flow with cached factory
         BotFlowFactory factory = cacheManager.getFactory(flowId);
 
         //Instantiating flow
-        BotFlow flow = factory.createFlow(update);
+        BotFlow flow = factory.createFlow(update, parentModel, controller);
 
         //Caching
         cacheManager.cacheFlow(userIdentifier, flow);

@@ -1,7 +1,9 @@
 package poc.flow.factory;
 
+import FlowProccessor.controller.BotFlowController;
 import FlowProccessor.factory.BotConditionFactory;
 import FlowProccessor.factory.BotFlowFactory;
+import FlowProccessor.model.impl.BotBaseModelEntity;
 import FlowProccessor.model.impl.BotCondition;
 import FlowProccessor.model.impl.BotTransition;
 import org.telegram.telegrambots.api.objects.Update;
@@ -20,7 +22,7 @@ public class ContactInfoFlowFactory extends BotFlowFactory {
     }
 
     @Override
-    public ContactFlow createFlow(Update update) {
+    public ContactFlow createFlow(Update update, BotBaseModelEntity model, BotFlowController controller) {
 
         ContactFlow flow = new ContactFlow(this.getId());
 

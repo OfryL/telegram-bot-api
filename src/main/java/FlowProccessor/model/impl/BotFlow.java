@@ -106,6 +106,11 @@ public abstract class BotFlow extends BotBaseFlowEntity implements IBotFlow {
         this.transitions.add(transition);
     }
 
+    public void addTransitions(List<BotTransition> transitions) {
+
+        this.transitions.addAll(transitions);
+    }
+
     public void addCallback(BotFlowCallback callback) {
         this.callbacks.add(callback);
     }

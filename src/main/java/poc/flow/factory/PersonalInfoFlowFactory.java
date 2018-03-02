@@ -1,5 +1,6 @@
 package poc.flow.factory;
 
+import FlowProccessor.controller.BotFlowController;
 import FlowProccessor.factory.BotConditionFactory;
 import FlowProccessor.factory.BotFlowFactory;
 import FlowProccessor.model.impl.BotBaseModelEntity;
@@ -25,7 +26,7 @@ public class PersonalInfoFlowFactory extends BotFlowFactory {
     }
 
     @Override
-    public PersonalInfoFlow createFlow(Update update) {
+    public PersonalInfoFlow createFlow(Update update, BotBaseModelEntity model, BotFlowController controller) {
 
         PersonalInfoFlow flow = new PersonalInfoFlow(this.getId());
 
