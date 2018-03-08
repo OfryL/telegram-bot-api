@@ -9,28 +9,34 @@ import FlowProccessor.model.impl.BotFlow;
 import java.util.*;
 import java.util.stream.Collectors;
 
-public abstract class AbstractCacheManager implements ICacheManager{
+public class BotCacheManager implements ICacheManager {
 
     private Set<BotCommand> commands;
     private Set<BotFlowFactory> flowFactories;
 
-    private Map<String, List<BotFlow>> userFlows;
+    private ICacheHolder cache;
 
-    public AbstractCacheManager(Set<BotFlowFactory> botFlowFactories, Set<BotCommand> commands) {
+    public BotCacheManager(Set<BotFlowFactory> botFlowFactories, Set<BotCommand> commands) {
 
         this.flowFactories = botFlowFactories;
         this.commands = commands;
+        this.cache = new BotDefaultCache();
+    }
 
-        this.userFlows = new HashMap<>();
+    public BotCacheManager(ICacheHolder cache, Set<BotFlowFactory> botFlowFactories, Set<BotCommand> commands) {
+
+        this.flowFactories = botFlowFactories;
+        this.commands = commands;
+        this.cache = cache;
     }
 
 
     @Override
     public BotFlow getActiveFlow(String userIdentifier) {
 
-        List<BotFlow> userCachedFlows =  this.userFlows.get(userIdentifier);
+        List<BotFlow> userCachedFlows = cache.get(userIdentifier);
 
-        return userCachedFlows != null ? userCachedFlows.get(userCachedFlows.size()-1) : null;
+        return userCachedFlows.size() > 0 ? userCachedFlows.get(userCachedFlows.size() - 1) : null;
     }
 
     @Override
@@ -47,16 +53,11 @@ public abstract class AbstractCacheManager implements ICacheManager{
     @Override
     public void cacheFlow(String userIdentifier, BotFlow flow) {
 
-        List<BotFlow> currentFlows = this.userFlows.get(userIdentifier);
-
-        if(currentFlows == null) {
-
-            currentFlows = new ArrayList<>();
-        }
+        List<BotFlow> currentFlows = cache.get(userIdentifier);
 
         currentFlows.add(flow);
 
-        this.userFlows.put(
+        cache.put(
                 userIdentifier,
                 currentFlows
         );
@@ -65,27 +66,22 @@ public abstract class AbstractCacheManager implements ICacheManager{
     @Override
     public void clearFlow(String userIdentifier) {
 
-        List<BotFlow> currentFlows = this.userFlows.get(userIdentifier);
+        List<BotFlow> currentFlows = cache.get(userIdentifier);
+        if (currentFlows.size() > 1) {
 
-        if(currentFlows != null) {
-
-            if(currentFlows.size() > 1) {
-
-                currentFlows.remove(currentFlows.size()-1);
-
-            }
-            else{
-
-                this.userFlows.remove(userIdentifier);
-            }
+            currentFlows.remove(currentFlows.size() - 1);
+            cache.put(userIdentifier, currentFlows);
         }
+        else {
+            cache.remove(userIdentifier);
+        }
+
     }
 
     @Override
     public BotFlow getParentFlow(String userIdentifier) {
 
-        List<BotFlow> flows = userFlows.get(userIdentifier);
-
+        List<BotFlow> flows = cache.get(userIdentifier);
         int size = flows.size();
 
         return size > 1 ? flows.get(size - 2) : null;
@@ -94,9 +90,9 @@ public abstract class AbstractCacheManager implements ICacheManager{
     @Override
     public BotBaseModelEntity getActiveFlowModel(String userIdentifier) {
 
-        List<BotFlow> flows = userFlows.get(userIdentifier);
+        List<BotFlow> flows = cache.get(userIdentifier);
 
-        return flows != null ? flows.get(flows.size()-1).getModel() : null;
+        return flows.size() > 0 ? flows.get(flows.size() - 1).getModel() : null;
     }
 
 

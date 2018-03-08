@@ -1,10 +1,13 @@
 package poc;
 
 import FlowProccessor.BotFlowProcessor;
-import FlowProccessor.cache.AbstractCacheManager;
+import FlowProccessor.cache.BotCacheManager;
 import FlowProccessor.controller.BotFlowController;
 import FlowProccessor.factory.BotFlowFactory;
 import FlowProccessor.model.impl.BotCommand;
+import FlowProccessor.model.impl.BotFlow;
+import com.google.common.cache.RemovalListener;
+import com.google.common.cache.RemovalNotification;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.telegram.telegrambots.api.methods.BotApiMethod;
@@ -13,7 +16,7 @@ import org.telegram.telegrambots.api.methods.updatingmessages.DeleteMessage;
 import org.telegram.telegrambots.api.objects.Message;
 import org.telegram.telegrambots.api.objects.Update;
 import org.telegram.telegrambots.exceptions.TelegramApiException;
-import poc.cache.CacheManager;
+import poc.cache.Cache;
 import poc.command.AbortCommand;
 import poc.command.StartCommand;
 import poc.config.ProcessorConfig;
@@ -23,13 +26,14 @@ import poc.flow.factory.PersonalInfoFlowFactory;
 
 import java.io.Serializable;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 public class POCBotController extends BotFlowController {
     private static final String NEW_UPDATE_LOG = "New update is here %s";
 
     private final Logger logger = LoggerFactory.getLogger(POCBotController.class);
-    private CacheManager cacheManager;
+    private BotCacheManager cacheManager;
 
     public void onUpdateReceived(Update update) {
 
@@ -47,7 +51,7 @@ public class POCBotController extends BotFlowController {
     }
 
     @Override
-    public AbstractCacheManager getCacheManager() {
+    public BotCacheManager getCacheManager() {
 
         if (this.cacheManager == null) {
 
@@ -71,10 +75,23 @@ public class POCBotController extends BotFlowController {
             commands.add(new StartCommand("personalInfoFlow"));
             commands.add(new AbortCommand(null));
 
-            this.cacheManager = new CacheManager(factories, commands);
+            this.cacheManager = new BotCacheManager(new Cache(onCacheSessionEnd()), factories, commands);
         }
 
         return cacheManager;
+    }
+
+    private RemovalListener<String, List<BotFlow>> onCacheSessionEnd() {
+
+        return removalNotification -> {
+
+            if(removalNotification.wasEvicted()){
+
+                executeOperation(
+                        new SendMessage().setText("test").setChatId(removalNotification.getKey())
+                );
+            }
+        };
     }
 
     @Override
@@ -90,6 +107,12 @@ public class POCBotController extends BotFlowController {
 
             ((DeleteMessage) method).setChatId(String.valueOf(userIdentifier));
         }
+
+        return executeOperation(method);
+
+    }
+
+    public <T extends Serializable, Method extends BotApiMethod<T>> T executeOperation(Method method) {
 
         try {
             return execute(method);

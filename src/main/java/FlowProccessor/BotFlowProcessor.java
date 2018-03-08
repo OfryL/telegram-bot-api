@@ -1,6 +1,6 @@
 package FlowProccessor;
 
-import FlowProccessor.cache.AbstractCacheManager;
+import FlowProccessor.cache.BotCacheManager;
 import FlowProccessor.controller.BotFlowController;
 import FlowProccessor.factory.BotFlowFactory;
 import FlowProccessor.locator.EntityLocator;
@@ -17,7 +17,7 @@ import java.util.function.Predicate;
 public class BotFlowProcessor implements IBotFlowProcessor {
 
     private BotFlowController controller;
-    private AbstractCacheManager cacheManager;
+    private BotCacheManager cacheManager;
     private static BotFlowProcessor instance;
 
     private BotFlowProcessor() {
