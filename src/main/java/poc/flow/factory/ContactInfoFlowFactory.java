@@ -8,12 +8,8 @@ import FlowProccessor.model.impl.BotCondition;
 import FlowProccessor.model.impl.BotTransition;
 import org.telegram.telegrambots.api.objects.Update;
 import poc.flow.ContactFlow;
-import poc.flow.MusicInfoFlow;
 import poc.step.contact.AgeStep;
 import poc.step.contact.ContactStep;
-
-import java.util.HashSet;
-import java.util.Set;
 
 public class ContactInfoFlowFactory extends BotFlowFactory {
 

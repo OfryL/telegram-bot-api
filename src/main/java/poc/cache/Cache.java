@@ -24,7 +24,7 @@ public class Cache implements ICacheHolder {
 
         cache = CacheBuilder.newBuilder()
                 .removalListener(listener)
-                .expireAfterAccess(30, TimeUnit.SECONDS)
+                .expireAfterAccess(30, TimeUnit.MINUTES)
                 .build(loader);
 
     }

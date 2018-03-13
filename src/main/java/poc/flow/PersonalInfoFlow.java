@@ -3,8 +3,6 @@ package poc.flow;
 import FlowProccessor.controller.BotFlowController;
 import FlowProccessor.model.impl.BotBaseModelEntity;
 import FlowProccessor.model.impl.BotFlow;
-import org.json.JSONObject;
-import org.telegram.telegrambots.api.methods.send.SendMessage;
 import org.telegram.telegrambots.api.objects.Update;
 import poc.model.PersonalInfoModel;
 

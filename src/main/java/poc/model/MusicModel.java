@@ -2,7 +2,6 @@ package poc.model;
 
 import FlowProccessor.model.IBotFlowModel;
 import FlowProccessor.model.impl.BotBaseModelEntity;
-import org.json.JSONObject;
 
 /**
  * The type Test model.

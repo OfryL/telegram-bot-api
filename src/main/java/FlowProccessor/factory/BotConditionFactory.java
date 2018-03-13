@@ -2,10 +2,7 @@ package FlowProccessor.factory;
 
 import FlowProccessor.model.impl.BotBaseModelEntity;
 import FlowProccessor.model.impl.BotCondition;
-import org.json.JSONObject;
 import org.telegram.telegrambots.api.objects.Update;
-
-import java.lang.reflect.InvocationTargetException;
 
 /**
  * The type Bot condition factory.

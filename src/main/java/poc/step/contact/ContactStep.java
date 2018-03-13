@@ -2,8 +2,6 @@ package poc.step.contact;
 
 import FlowProccessor.controller.BotFlowController;
 import FlowProccessor.model.impl.BotBaseModelEntity;
-import FlowProccessor.model.impl.BotStep;
-import org.json.JSONObject;
 import org.telegram.telegrambots.api.methods.send.SendMessage;
 import org.telegram.telegrambots.api.objects.Contact;
 import org.telegram.telegrambots.api.objects.Update;

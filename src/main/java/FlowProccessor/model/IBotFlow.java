@@ -3,13 +3,8 @@ package FlowProccessor.model;
 
 import FlowProccessor.controller.BotFlowController;
 import FlowProccessor.model.impl.*;
-import org.json.JSONObject;
-import org.telegram.telegrambots.api.methods.BotApiMethod;
-import org.telegram.telegrambots.api.methods.send.SendMessage;
 import org.telegram.telegrambots.api.objects.Update;
 
-import java.io.Serializable;
-import java.util.List;
 import java.util.Set;
 
 public interface IBotFlow {
@@ -21,8 +16,6 @@ public interface IBotFlow {
     BotBaseFlowEntity getActiveEntity();
 
     Set<BotFlowCallback> getCallbacks();
-
-    Set<BotTransition> getChildInterceptors();
 
     void onExist(Update update, BotBaseModelEntity model, BotFlowController controller);
 

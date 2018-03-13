@@ -1,7 +1,9 @@
 package FlowProccessor.model.impl;
 
+import FlowProccessor.model.BotBaseFlowEntity;
 import com.google.common.collect.Lists;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class BotTransition<F extends BotBaseFlowEntity, T extends BotBaseFlowEntity> {
@@ -9,17 +11,24 @@ public class BotTransition<F extends BotBaseFlowEntity, T extends BotBaseFlowEnt
     private F from;
     private T to;
 
-    private List<BotCondition> conditions;
+    private List<BotCondition> nextConditions;
+    private List<BotCondition> backConditions;
 
-    public BotTransition(F from, T to, List<BotCondition> conditions) {
+    public BotTransition(F from, T to, List<BotCondition> nextConditions, List<BotCondition> backConditions) {
         this.setFrom(from);
         this.setTo(to);
-        this.setConditions(conditions);
+        this.setNextConditions(nextConditions);
+        this.setBackConditions(backConditions);
     }
 
     public BotTransition(F from, T to, BotCondition condition) {
 
-         this(from, to, Lists.newArrayList(condition));
+         this(from, to, Lists.newArrayList(condition), new ArrayList<>());
+    }
+
+    public BotTransition(F from, T to, BotCondition condition, BotCondition backCondition) {
+
+        this(from, to, Lists.newArrayList(condition), Lists.newArrayList(backCondition));
     }
 
     public F getFrom() {
@@ -38,11 +47,19 @@ public class BotTransition<F extends BotBaseFlowEntity, T extends BotBaseFlowEnt
         this.to = to;
     }
 
-    public List<BotCondition> getConditions() {
-        return conditions;
+    public List<BotCondition> getNextConditions() {
+        return nextConditions;
     }
 
-    private void setConditions(List<BotCondition> conditions) {
-        this.conditions = conditions;
+    private void setNextConditions(List<BotCondition> nextConditions) {
+        this.nextConditions = nextConditions;
+    }
+
+    public List<BotCondition> getBackConditions() {
+        return backConditions;
+    }
+
+    private void setBackConditions(List<BotCondition> backConditions) {
+        this.backConditions = backConditions;
     }
 }

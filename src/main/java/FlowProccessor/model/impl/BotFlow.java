@@ -1,14 +1,10 @@
 package FlowProccessor.model.impl;
 
 import FlowProccessor.controller.BotFlowController;
+import FlowProccessor.model.BotBaseFlowEntity;
 import FlowProccessor.model.IBotFlow;
-import FlowProccessor.model.IBotFlowModel;
-import org.json.JSONObject;
-import org.telegram.telegrambots.api.methods.BotApiMethod;
-import org.telegram.telegrambots.api.methods.send.SendMessage;
 import org.telegram.telegrambots.api.objects.Update;
 
-import java.io.Serializable;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -26,8 +22,6 @@ public abstract class BotFlow extends BotBaseFlowEntity implements IBotFlow {
 
     private Set<BotFlowCallback> callbacks;
 
-    private Set<BotTransition> childInterceptors;
-
     /**
      * Instantiates a new Bot flow.
      *
@@ -38,7 +32,6 @@ public abstract class BotFlow extends BotBaseFlowEntity implements IBotFlow {
         super(id);
         setTransitions(new HashSet<>());
         setCallbacks(new HashSet<>());
-        setChildInterceptors(new HashSet<>());
     }
 
     /**
@@ -93,15 +86,6 @@ public abstract class BotFlow extends BotBaseFlowEntity implements IBotFlow {
     public void onExist(Update update, BotBaseModelEntity model, BotFlowController controller) {
     }
 
-    @Override
-    public Set<BotTransition> getChildInterceptors() {
-        return childInterceptors;
-    }
-
-    public void setChildInterceptors(Set<BotTransition> childInterceptors) {
-        this.childInterceptors = childInterceptors;
-    }
-
     public void addTransition(BotTransition transition) {
         this.transitions.add(transition);
     }
@@ -113,9 +97,5 @@ public abstract class BotFlow extends BotBaseFlowEntity implements IBotFlow {
 
     public void addCallback(BotFlowCallback callback) {
         this.callbacks.add(callback);
-    }
-
-    public void addChildInterceptor(BotTransition transition) {
-        this.childInterceptors.add(transition);
     }
 }

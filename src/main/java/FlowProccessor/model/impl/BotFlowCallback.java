@@ -1,7 +1,7 @@
 package FlowProccessor.model.impl;
 
+import FlowProccessor.model.BotBaseFlowEntity;
 import FlowProccessor.model.IBotFlowCallback;
-import FlowProccessor.model.IBotStep;
 
 /**
  * The type Bot step.

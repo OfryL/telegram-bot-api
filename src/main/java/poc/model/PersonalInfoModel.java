@@ -2,8 +2,6 @@ package poc.model;
 
 import FlowProccessor.model.IBotFlowModel;
 import FlowProccessor.model.impl.BotBaseModelEntity;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import org.json.JSONObject;
 
 /**
  * The type Test model.

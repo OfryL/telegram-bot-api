@@ -2,15 +2,10 @@ package poc.step;
 
 import FlowProccessor.controller.BotFlowController;
 import FlowProccessor.model.impl.BotBaseModelEntity;
-import FlowProccessor.model.impl.BotStep;
-import org.json.JSONObject;
-import org.telegram.telegrambots.api.methods.send.SendMessage;
 import org.telegram.telegrambots.api.objects.Update;
 
-import java.nio.charset.Charset;
 import java.util.Random;
 import java.util.UUID;
-import java.util.concurrent.ThreadLocalRandom;
 
 public class ValidateGenerateWordStep extends BaseStep {
 

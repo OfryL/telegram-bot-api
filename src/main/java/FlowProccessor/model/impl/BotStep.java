@@ -1,15 +1,7 @@
 package FlowProccessor.model.impl;
 
+import FlowProccessor.model.BotBaseFlowEntity;
 import FlowProccessor.model.IBotStep;
-import org.json.JSONObject;
-import org.telegram.telegrambots.api.methods.BotApiMethod;
-import org.telegram.telegrambots.api.methods.send.SendMessage;
-import org.telegram.telegrambots.api.objects.Message;
-import org.telegram.telegrambots.api.objects.Update;
-import org.telegram.telegrambots.api.objects.replykeyboard.InlineKeyboardMarkup;
-import org.telegram.telegrambots.api.objects.replykeyboard.ReplyKeyboardMarkup;
-
-import java.io.Serializable;
 
 /**
  * The type Bot step.

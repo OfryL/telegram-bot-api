@@ -1,4 +1,4 @@
-package FlowProccessor.model.impl;
+package FlowProccessor.model;
 
 import org.telegram.telegrambots.api.methods.send.SendMessage;
 import org.telegram.telegrambots.api.methods.updatingmessages.DeleteMessage;

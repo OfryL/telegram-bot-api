@@ -3,13 +3,9 @@ package poc.step;
 import FlowProccessor.controller.BotFlowController;
 import FlowProccessor.model.impl.BotBaseModelEntity;
 import FlowProccessor.model.impl.BotStep;
-import org.telegram.telegrambots.api.methods.BotApiMethod;
-import org.telegram.telegrambots.api.methods.send.SendMessage;
 import org.telegram.telegrambots.api.objects.Update;
 
-import java.io.Serializable;
-
-public class BaseStep extends BotStep {
+public class BaseStep extends BotStep  {
 
     public BaseStep(String id) {
         super(id);
@@ -32,6 +28,18 @@ public class BaseStep extends BotStep {
     @Override
     public void complete(Update update, BotBaseModelEntity model, BotFlowController controller) {
 
+    }
+
+    @Override
+    public void back(Update update, BotBaseModelEntity model, BotFlowController controller) {
+
+        if(update.hasCallbackQuery()) {
+
+            controller.executeOperation(
+                    update,
+                    deleteFromCallback(update)
+            );
+        }
     }
 
     @Override

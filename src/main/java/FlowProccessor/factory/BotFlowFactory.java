@@ -1,6 +1,6 @@
 package FlowProccessor.factory;
 
-import FlowProccessor.model.impl.BotBaseFlowEntity;
+import FlowProccessor.model.BotBaseFlowEntity;
 
 public abstract class BotFlowFactory extends BotBaseFlowEntity implements IBotFlowFactory{
 

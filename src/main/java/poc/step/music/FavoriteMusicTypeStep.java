@@ -2,18 +2,12 @@ package poc.step.music;
 
 import FlowProccessor.controller.BotFlowController;
 import FlowProccessor.model.impl.BotBaseModelEntity;
-import FlowProccessor.model.impl.BotStep;
-import org.json.JSONObject;
-import org.telegram.telegrambots.api.methods.send.SendMessage;
-import org.telegram.telegrambots.api.methods.updatingmessages.DeleteMessage;
 import org.telegram.telegrambots.api.objects.CallbackQuery;
 import org.telegram.telegrambots.api.objects.Update;
 import org.telegram.telegrambots.api.objects.replykeyboard.InlineKeyboardMarkup;
-import org.telegram.telegrambots.api.objects.replykeyboard.ReplyKeyboardRemove;
 import org.telegram.telegrambots.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 import poc.step.BaseStep;
 
-import java.nio.charset.Charset;
 import java.util.*;
 
 public class FavoriteMusicTypeStep extends BaseStep {

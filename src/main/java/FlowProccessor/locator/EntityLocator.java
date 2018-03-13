@@ -1,10 +1,10 @@
 package FlowProccessor.locator;
 
 import FlowProccessor.factory.BotFlowFactory;
+import FlowProccessor.model.BotBaseFlowEntity;
 import FlowProccessor.model.impl.*;
 import org.telegram.telegrambots.api.objects.Update;
 
-import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -47,9 +47,18 @@ public final class EntityLocator {
 
     public static Set<BotTransition> locateInterceptorTransition(BotFlow flow, BotBaseFlowEntity entity) {
 
-        Set<BotTransition> transitions = flow.getChildInterceptors();
+        Set<BotTransition> transitions = flow.getTransitions();
 
-        Stream<BotTransition> matched = transitions.stream().filter(t -> t.getFrom().getId().equals(entity.getId()));
+        Stream<BotTransition> matched = transitions.stream().filter(t -> t.getTo().getId().equals(entity.getId()));
+
+        return matched.collect(Collectors.toSet());
+    }
+
+    public static Set<BotTransition> locateStepBackTransition(BotStep step, BotFlow flow) {
+
+        Set<BotTransition> transitions = flow.getTransitions();
+
+        Stream<BotTransition> matched = transitions.stream().filter(t -> t.getTo().getId().equals(step.getId()) && t.getBackConditions() != null);
 
         return matched.collect(Collectors.toSet());
     }

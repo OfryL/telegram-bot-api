@@ -8,14 +8,8 @@ import FlowProccessor.model.impl.BotCondition;
 import FlowProccessor.model.impl.BotTransition;
 import org.telegram.telegrambots.api.objects.Update;
 import poc.flow.MusicInfoFlow;
-import poc.flow.PersonalInfoFlow;
-import poc.step.contact.AgeStep;
-import poc.step.contact.ContactStep;
 import poc.step.music.FavoriteMusicTypeStep;
 import poc.step.music.FavoriteSongStep;
-
-import java.util.HashSet;
-import java.util.Set;
 
 public class MusicInfoFlowFactory extends BotFlowFactory {
 
@@ -29,13 +23,14 @@ public class MusicInfoFlowFactory extends BotFlowFactory {
         MusicInfoFlow flow = new MusicInfoFlow(this.getId());
 
         BotCondition always = BotConditionFactory.getInstance().always();
+        BotCondition backToChooseType = BotConditionFactory.getInstance().callbackDataEqualsCondition("BACK_TO_CHOOSE_MUSIC");
 
         FavoriteSongStep favoriteSongStep = new FavoriteSongStep("favoriteSongStep");
         FavoriteMusicTypeStep favoriteMusicTypeStep = new FavoriteMusicTypeStep("favoriteMusicTypeStep");
 
-        BotTransition toFavSong = new BotTransition<>(favoriteMusicTypeStep, favoriteSongStep, always);
+        BotTransition favoriteTypeAndSongTransition = new BotTransition<>(favoriteMusicTypeStep, favoriteSongStep, always, backToChooseType);
 
-        flow.addTransition(toFavSong);
+        flow.addTransition(favoriteTypeAndSongTransition);
         flow.setActiveEntity(favoriteMusicTypeStep);
 
         return flow;
