@@ -7,9 +7,6 @@ import FlowProccessor.factory.BotFlowFactory;
 import FlowProccessor.model.impl.BotCommand;
 import FlowProccessor.model.impl.BotFlow;
 import com.google.common.cache.RemovalListener;
-import com.google.common.cache.RemovalNotification;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.telegram.telegrambots.api.methods.BotApiMethod;
 import org.telegram.telegrambots.api.methods.send.SendMessage;
 import org.telegram.telegrambots.api.methods.updatingmessages.DeleteMessage;
@@ -30,9 +27,7 @@ import java.util.List;
 import java.util.Set;
 
 public class POCBotController extends BotFlowController {
-    private static final String NEW_UPDATE_LOG = "New update is here %s";
 
-    private final Logger logger = LoggerFactory.getLogger(POCBotController.class);
     private BotCacheManager cacheManager;
 
     public void onUpdateReceived(Update update) {
