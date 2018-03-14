@@ -1,13 +1,17 @@
 package FlowProccessor;
 
 import FlowProccessor.cache.BotCacheManager;
+import FlowProccessor.config.ProcessorConfig;
 import FlowProccessor.controller.BotFlowController;
 import FlowProccessor.factory.BotFlowFactory;
 import FlowProccessor.locator.EntityLocator;
 import FlowProccessor.model.BotBaseFlowEntity;
 import FlowProccessor.model.impl.BotBaseModelEntity;
 import FlowProccessor.model.impl.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.telegram.telegrambots.api.objects.Update;
+import poc.POCBotController;
 
 import java.util.List;
 import java.util.Set;
@@ -21,7 +25,9 @@ public class BotFlowProcessor implements IBotFlowProcessor {
     private BotFlowController controller;
     private BotCacheManager cacheManager;
     private static BotFlowProcessor instance;
+    private ProcessorConfig config;
 
+    private final Logger logger = LoggerFactory.getLogger(BotFlowProcessor.class);
     private BotFlowProcessor() {
     }
 
@@ -47,6 +53,9 @@ public class BotFlowProcessor implements IBotFlowProcessor {
         //Setting controller
         this.controller = clientController;
 
+        //Using client config
+        config = clientController.getConfig();
+
         //Initializing cache manager
         this.cacheManager = clientController.getCacheManager();
     }
@@ -71,6 +80,7 @@ public class BotFlowProcessor implements IBotFlowProcessor {
         }
         else {
             //No command / Active cached flow was found, Sending default
+            doLog(userIdentifier, "No flow NOR command was found for processing, Sending default response");
             controller.sendDefaultResponse(update);
         }
 
@@ -78,8 +88,9 @@ public class BotFlowProcessor implements IBotFlowProcessor {
 
     private void processCommand(BotCommand command, String userIdentifier, Update update) {
 
-        command.doAction(update, controller);
+        doLog(userIdentifier, "processCommand: Processing command {}", command.getIdentifier());
 
+        command.doAction(update, controller);
         command.activate(update, controller);
 
         String flowId = command.getFlowEntityId();
@@ -91,6 +102,8 @@ public class BotFlowProcessor implements IBotFlowProcessor {
     }
 
     private void processFlow(String userIdentifier, Update update, BotFlow flow) {
+
+        doLog(userIdentifier, "processFlow: Processing flow {}",  flow.getId());
 
         //Matching up transition handler by prioritization
         BotTransitionHandler handler = findTransitionHandler(
@@ -110,17 +123,21 @@ public class BotFlowProcessor implements IBotFlowProcessor {
             }
             else {
 
+                doLog(userIdentifier, "processFlow: No transition handler was found, Completing flow {}",  flow.getId());
                 //No handler was found for current flow, Completing
                 completeFlow(flow, userIdentifier, update);
             }
         }
     }
 
-    private boolean processStep(BotStep step, BotBaseModelEntity model, Update update) {
+    private boolean processStep(String userIdentifier, BotStep step, BotBaseModelEntity model, Update update) {
+
+        doLog(userIdentifier, "processStep: Process start for step {} ",step.getId());
 
         //Validating step
         if (!step.isValid(update, model, controller)) {
 
+            doLog(userIdentifier, "processStep: Step {} was found invalid", step.getId());
             step.invalidMessage(update, model, controller);
             return false;
         }
@@ -133,9 +150,12 @@ public class BotFlowProcessor implements IBotFlowProcessor {
 
             //Completing
             step.complete(update, model, controller);
+
+            doLog(userIdentifier, "processStep: Step {} was completed!", step.getId());
         }
         catch (Exception e) {
 
+            doLog(userIdentifier, "processStep: Failed on Step {} processing", step.getId());
             e.printStackTrace();
             step.invalidMessage(update, model, controller);
         }
@@ -145,6 +165,7 @@ public class BotFlowProcessor implements IBotFlowProcessor {
 
     private void completeFlow(BotFlow flow, String userIdentifier, Update update) {
 
+        doLog(userIdentifier, "completeFlow: completing flow {}", flow.getId());
         //First Resolving current flow model
         flow.setDone(true);
 
@@ -164,6 +185,7 @@ public class BotFlowProcessor implements IBotFlowProcessor {
             BotFlowCallback callback = EntityLocator.locateFlowCallback(parentFlow, flow);
             if (callback != null) {
 
+                doLog(userIdentifier, "completeFlow: Doing callback of {}, connect to {} completion", parentFlow.getId(), flow.getId());
                 //Doing callback
                 callback.doCallback(update, parentFlowModel, controller);
             }
@@ -182,6 +204,9 @@ public class BotFlowProcessor implements IBotFlowProcessor {
 
             BotBaseModelEntity model = cacheManager.getActiveFlowModel(userIdentifier);
             botStep.begin(update, model, controller);
+
+            doLog(userIdentifier, "beginFlowEntity: {} Step begin ", entity.getId());
+
         }
         else {
 
@@ -192,6 +217,7 @@ public class BotFlowProcessor implements IBotFlowProcessor {
 
     private void startFlow(String flowId, String userIdentifier, Update update) {
 
+        doLog(userIdentifier, "startFlow: {} Flow begin ", flowId);
         //Getting parent flow if exists
         BotBaseModelEntity parentModel = cacheManager.getActiveFlowModel(userIdentifier);
 
@@ -219,6 +245,7 @@ public class BotFlowProcessor implements IBotFlowProcessor {
         BotTransition parentInterceptorTransition = getInterceptorTransition(userIdentifier, update, flow);
         if(parentInterceptorTransition != null) {
 
+            doLog(userIdentifier, "findTransitionHandler: Found Parent interceptor transition");
             return new ParentInterceptorTransitionHandler(
                     false,
                     parentInterceptorTransition,
@@ -231,6 +258,7 @@ public class BotFlowProcessor implements IBotFlowProcessor {
         BotTransition stepBackTransition = getStepBackTransition(update, flow);
         if(stepBackTransition != null) {
 
+            doLog(userIdentifier, "findTransitionHandler: Found Step back transition");
             return new StepBackTransitionHandler(
                     false,
                     stepBackTransition,
@@ -240,6 +268,7 @@ public class BotFlowProcessor implements IBotFlowProcessor {
 
         //If both was not matched, Return the Current step process transition
         //**Note, Actual transition (if matched) will be set by the before transition.
+        doLog(userIdentifier, "findTransitionHandler: Found Process step transition");
         return new ProcessStepTransitionHandler(
                 true,
                 null,
@@ -305,6 +334,8 @@ public class BotFlowProcessor implements IBotFlowProcessor {
         //Getting the proper entity by direction
         BotBaseFlowEntity flowEntity = next ? transition.getTo() : transition.getFrom();
 
+        doLog(userIdentifier, "doTransition: Performing transition from {}, to {}", flow.getActiveEntity().getId(), flowEntity.getId());
+
         //Do transition
         flow.setActiveEntity(flowEntity);
         beginFlowEntity(flowEntity, userIdentifier, update);
@@ -364,7 +395,7 @@ public class BotFlowProcessor implements IBotFlowProcessor {
             if(activeEntity instanceof BotStep) {
 
                 BotStep activeStep = (BotStep) activeEntity;
-                boolean processCompleted = processStep(activeStep, flow.getModel(), update);
+                boolean processCompleted = processStep(userIdentifier, activeStep, flow.getModel(), update);
 
                 //If step failed, Freezing flow state on current step
                 if(!processCompleted) return false;
@@ -379,6 +410,13 @@ public class BotFlowProcessor implements IBotFlowProcessor {
             );
 
             return true;
+        }
+    }
+
+    private void doLog(String userIdentifier, String message, Object... params) {
+
+        if(config.isDebugMode()){
+            logger.info(String.format("[%s] --> %s", userIdentifier, message), params);
         }
     }
 }

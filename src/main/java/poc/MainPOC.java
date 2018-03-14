@@ -1,6 +1,7 @@
 package poc;
 
 import FlowProccessor.BotFlowProcessor;
+import FlowProccessor.config.ProcessorConfig;
 import org.telegram.telegrambots.ApiContextInitializer;
 import org.telegram.telegrambots.TelegramBotsApi;
 import org.telegram.telegrambots.exceptions.TelegramApiRequestException;

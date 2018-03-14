@@ -18,7 +18,7 @@ public abstract class BotBaseModelEntity implements BotApiObject, IBotFlowModel 
                                     method1.getName().equalsIgnoreCase("is" + fieldName))
                 .findFirst();
 
-        Object val = null;;
+        Object val = null;
 
         try {
             val = getterMethodOptional

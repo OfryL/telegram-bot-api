@@ -1,6 +1,7 @@
 package FlowProccessor.controller;
 
 import FlowProccessor.cache.BotCacheManager;
+import FlowProccessor.config.ProcessorConfig;
 import org.telegram.telegrambots.api.methods.BotApiMethod;
 import org.telegram.telegrambots.api.objects.Update;
 
@@ -21,5 +22,7 @@ public interface IBotFlowController {
     void sendDefaultResponse(Update update);
 
     BotCacheManager getCacheManager();
+
+    ProcessorConfig getConfig();
 
 }

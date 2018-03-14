@@ -37,8 +37,6 @@ public class POCBotController extends BotFlowController {
 
     public void onUpdateReceived(Update update) {
 
-        logger.info(String.format(NEW_UPDATE_LOG, update));
-
         BotFlowProcessor.getInstance().processUpdate(update);
     }
 
@@ -79,6 +77,14 @@ public class POCBotController extends BotFlowController {
         }
 
         return cacheManager;
+    }
+
+    @Override
+    public FlowProccessor.config.ProcessorConfig getConfig() {
+
+        return new FlowProccessor.config.ProcessorConfig.ProcessorConfigBuilder()
+                .debugMode(true)
+                .build();
     }
 
     private RemovalListener<String, List<BotFlow>> onCacheSessionEnd() {
