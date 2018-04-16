@@ -15,7 +15,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.telegram.telegrambots.api.methods.send.SendMessage;
 import org.telegram.telegrambots.api.objects.Message;
-import org.telegram.telegrambots.api.objects.User;
+
 
 public class BotMessageProcessorTest {
     private final Logger logger = LoggerFactory.getLogger(BotMessageProcessorTest.class);
